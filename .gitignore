@@ -98,10 +98,10 @@ fabric.properties
 /v1/vendor/
 
 ### .htaccess ###
-/v1/.htaccess
+.htaccess
 
 ### Config ###
-/v1/config.php
+config.php
 .idea/deployment.xml
 .idea/inspectionProfiles/
 .idea/modules.xml
