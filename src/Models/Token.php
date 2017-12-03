@@ -6,13 +6,13 @@
  * Time: 7:55 PM
  */
 
-namespace Scholarship\Models;
+namespace CoffeeRunner\Models;
 
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use \Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
-use Scholarship\Http\StatusCodes;
+use CoffeeRunner\Http\StatusCodes;
 
 class Token
 {
