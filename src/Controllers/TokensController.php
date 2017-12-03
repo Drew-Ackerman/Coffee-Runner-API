@@ -6,10 +6,10 @@
  * Time: 12:55 PM
  */
 
-namespace Scholarship\Controllers;
+namespace CoffeeRunner\Controllers;
 
-use \Scholarship\Models\Token as Token;
-use \Scholarship\Http\StatusCodes;
+use CoffeeRunner\Models\Token as Token;
+use CoffeeRunner\Http\StatusCodes as StatusCodes;
 
 
 class TokensController
