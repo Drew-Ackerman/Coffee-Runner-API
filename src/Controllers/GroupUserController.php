@@ -11,6 +11,7 @@ namespace CoffeeRunner\Controllers;
 
 class GroupUserController
 {
+
     public function addUser(){
 
     }
