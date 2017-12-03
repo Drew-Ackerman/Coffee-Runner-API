@@ -1,11 +1,11 @@
 {
-    "name": "drew/coffeerunner",
-    "description": "A RESTful API for CoffeeRunner.",
+    "name": "weber/scholarship",
+    "description": "A RESTful API to handle Scholarship applications.",
     "type": "project",
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "CoffeeRunner\\": "src/"
+            "Scholarship\\": "src/"
         }
     },
     "require": {

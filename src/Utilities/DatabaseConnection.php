@@ -4,7 +4,7 @@
  * User: iamcaptaincode
  */
 
-namespace CoffeeRunner\Utilities;
+namespace Scholarship\Utilities;
 
 
 class DatabaseConnection

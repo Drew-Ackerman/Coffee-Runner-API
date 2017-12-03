@@ -6,7 +6,7 @@
  * Time: 12:26 PM
  */
 
-namespace CoffeeRunner\Http;
+namespace Scholarship\Http;
 
 
 class Methods
