@@ -92,25 +92,14 @@ fabric.properties
 
 ### IDEA ###
 .idea/
-/v1/.idea/
-
 ### Composer ###
-/v1/vendor/
+vendor/
 
 ### .htaccess ###
 .htaccess
 
 ### Config ###
 config.php
-.idea/deployment.xml
-.idea/inspectionProfiles/
-.idea/modules.xml
-.idea/scholarship-rest-f17.iml
-.idea/vcs.xml
-v1/.htaccess
-.idea/php.xml
-/v1/composer.lock
-v1/composer.lock
-
+php.xml
+composer.lock
 .idea
-
