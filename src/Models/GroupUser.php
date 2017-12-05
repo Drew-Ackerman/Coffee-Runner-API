@@ -25,9 +25,30 @@ class groupUser
      *Delete user
      */
 
-    public function deleteUser()
+    public function deletegroupUser()
     {
+        try
+        {
+            if (empty($this->groupUserID))
+            {
+                die("error: the wnumber is not provided");
+            }
+            else
+            {
+                $dbh = DatabaseConnection::getInstance();
+                $stmtHandle = $dbh->prepare("DELETE FROM `groupUser` WHERE `groupUserID` = :groupUserID");
+                $stmtHandle->bindValue(":groupUserID", $this->getGroupUserID());
+                $success = $stmtHandle->execute();
 
+                if (!$success) {
+                    throw new \PDOException("user full delete unsuccessful.");
+                }
+            }
+        }
+        catch (\PDOException $e)
+        {
+            throw $e;
+        }
     }
 
     /**

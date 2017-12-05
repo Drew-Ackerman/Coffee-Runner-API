@@ -30,9 +30,68 @@ class User
      * deletes a user
      */
 
+    public function create()
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "INSERT INTO 'User'(
+                'userName',
+                'password',
+                'firstName',
+                'lastName',
+                'foodPreference',
+                'drinkPreference',
+                ) 
+                VALUES (:userName,:password,:firstName,:lastName,:foodPreference,:drinkPreference)");
+
+            $stmtHandle->bindValue(":userName", $this->userName);
+            $stmtHandle->bindValue(":password", $this->password);
+            $stmtHandle->bindValue(":firstName",$this->firstName);
+            $stmtHandle->bindValue(":lastName",$this->lastName);
+            $stmtHandle->bindValue(":foodPreference",$this->foodPreference);
+            $stmtHandle->bindValue(":drinkPreference",$this->drinkPreference);
+
+
+            $success = $stmtHandle->execute();
+
+            if (!$success)
+            {
+                throw new \PDOException("sql query execution failed");
+            }
+
+        }
+        catch (\Exception $e)
+        {
+            throw $e;
+        }
+    }
+
     public function deleteUser()
     {
+        try
+        {
+            if (empty($this->wNumber))
+            {
+                die("error: the userID is not provided");
+            }
+            else
+            {
+                $dbh = DatabaseConnection::getInstance();
+                $stmtHandle = $dbh->prepare("DELETE FROM 'User' WHERE 'userID' = :userID");
+                $stmtHandle->bindValue(":", $this->getUserID());
+                $success = $stmtHandle->execute();
 
+                if (!$success) {
+                    throw new \PDOException("user delete failed.");
+                }
+            }
+        }
+        catch (\PDOException $e)
+        {
+            throw $e;
+        }
     }
 
     /**
