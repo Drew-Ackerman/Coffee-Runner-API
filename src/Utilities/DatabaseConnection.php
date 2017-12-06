@@ -11,9 +11,9 @@ class DatabaseConnection
 {
     private static $instance = null;
     private static $host = "localhost";
-    private static $dbname = "scholarship_dev";
-    private static $user = "scholarshipdev";
-    private static $pass = "WeberCS!";
+    private static $dbname = "coffeerunner";
+    private static $user = "coffeerunner";
+    private static $pass = "pebkac!";
 
     private function __construct()
     {

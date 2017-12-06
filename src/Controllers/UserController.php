@@ -8,10 +8,14 @@
 
 namespace CoffeeRunner\Controllers;
 
+use CoffeeRunner\Models\User;
+
 class UserController
 {
-    public function createUser(){
-
+    public static function createUser($json){
+        $json
+        $newUser = new User();
+        $newUser->create();
     }
 
     public function deleteUser(){
