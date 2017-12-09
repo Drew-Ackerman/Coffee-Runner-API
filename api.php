@@ -65,16 +65,20 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
 
     $updateGroupPresident = function ($args) {
         $groupController = new GroupController();
+        #TODO: pass in president arg
+        $groupController->changePresident();
     };
 
     $updateGroupRunner = function ($args) {
         $groupController = new GroupController();
+        #TODO: pass in runner arg
+        $groupController->changeRunner();
     };
 
     $createGroup = function ($args) {
         $groupController = new GroupController();
         $json = (object) json_decode(file_get_contents('php://input'), true);
-        $groupController::createGroup();
+        $groupController::createGroup($json);
     };
 
     $deleteGroup = function ($args) {
@@ -99,6 +103,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
     };
 
     /******User Routes******/
+    #TODO: JENSON, Ask if i need the userID from comparison because of pulling username from token for validation
     $r->addRoute(Methods::POST, $baseURI . "/user", $handleCreateUser);
     $r->addRoute(Methods::DELETE, $baseURI . "/user/{userID:\d+}", $handleDeleteUser);
     $r->addRoute(Methods::PATCH, $baseURI . "/user/foodpreference/{userID:\d+}", $updateUserFoodPreference);

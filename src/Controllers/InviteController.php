@@ -24,16 +24,18 @@ class InviteController
 
     public static function sendInvite($args){
         $invite = new Invite();
+        #TODO: Send INVITE
     }
 
-    #TODO: patch, set, change or update?
+
     public function patchStatus($args){
         $invite = new Invite();
+        #TODO: Update invite status
     }
 
-    #TODO: Tell kyle about this addition
     #This is just a method to delete/cancel a sent invite.
     public function deleteInvite($inviteID){
         $invite = new Invite();
+        #TODO: Delete invite request
     }
 }

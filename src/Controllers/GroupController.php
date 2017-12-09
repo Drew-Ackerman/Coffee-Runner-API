@@ -17,14 +17,25 @@ class GroupController
         $group->setGroupName();
         $group->setGroupRunner();
         $group->setGroupPresident();
+        $group->createGroup();
     }
 
-    public function deleteGroup(){
+    public function deleteGroup($president){
         #TODO call delete method, pass in Id
+        $group = new Group();
+        $group->getGroup();
+
+        if($group->getGroupPresident() != $president){
+            http_response_code(401);
+            return "Unauthorized user trying to delete group";
+        }
+        $group->deleteGroup();
+        return "Group successfully deleted";
     }
 
     public function changePresident(){
         #TODO call change President method
+
     }
 
     public function changeRunner(){
