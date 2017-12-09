@@ -9,12 +9,13 @@
 namespace CoffeeRunner\Models;
 
 
-class User
+use Scholarship\Utilities\DatabaseConnection;
+
+class User implements \JsonSerializable
 {
 
     private $userID;
     private $userName;
-    private $password;
     private $firstName;
     private $lastName;
     private $foodPreference;
@@ -26,6 +27,18 @@ class User
 
     }
 
+    function jsonSerialize()
+    {
+        $rtn= array(
+        'userID' => $this->userID,
+        '$userName' => $this->userName,
+        'firstName' => $this->firstName,
+        'lastName' => $this->lastName,
+        'foodPreference' => $this->foodPreference,
+        'drinkPreference' => $this->drinkPreference,
+        );
+        return $rtn;
+    }
     /**
      * deletes a user
      */
@@ -38,16 +51,14 @@ class User
             $stmtHandle = $dbh->prepare(
                 "INSERT INTO 'User'(
                 'userName',
-                'password',
                 'firstName',
                 'lastName',
                 'foodPreference',
                 'drinkPreference',
                 ) 
-                VALUES (:userName,:password,:firstName,:lastName,:foodPreference,:drinkPreference)");
+                VALUES (:userName,:firstName,:lastName,:foodPreference,:drinkPreference)");
 
             $stmtHandle->bindValue(":userName", $this->userName);
-            $stmtHandle->bindValue(":password", $this->password);
             $stmtHandle->bindValue(":firstName",$this->firstName);
             $stmtHandle->bindValue(":lastName",$this->lastName);
             $stmtHandle->bindValue(":foodPreference",$this->foodPreference);
@@ -68,30 +79,84 @@ class User
         }
     }
 
-    public function deleteUser()
+    public function deleteUser($arg)
     {
         try
         {
-            if (empty($this->wNumber))
-            {
-                die("error: the userID is not provided");
-            }
-            else
-            {
-                $dbh = DatabaseConnection::getInstance();
-                $stmtHandle = $dbh->prepare("DELETE FROM 'User' WHERE 'userID' = :userID");
-                $stmtHandle->bindValue(":", $this->getUserID());
-                $success = $stmtHandle->execute();
 
-                if (!$success) {
-                    throw new \PDOException("user delete failed.");
-                }
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare("DELETE FROM 'User' WHERE 'username' = :username");
+            $stmtHandle->bindValue(":", $arg);
+            $success = $stmtHandle->execute();
+
+            if (!$success) {
+                throw new \PDOException("user delete failed.");
             }
+
         }
         catch (\PDOException $e)
         {
             throw $e;
         }
+    }
+
+    public function updateFirst($userName,$updFirst)
+    {
+        $dbh = DatabaseConnection::getInstance();
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName");
+        $stmtHandle->bindValue(":firstName", $updFirst);
+        $success = $stmtHandle->execute();
+
+        if (!$success)
+        {
+            throw new \PDOException("Something went wrong with the update.");
+        }
+
+
+    }
+
+    public function updateLast($userName,$updLast)
+    {
+        $dbh = DatabaseConnection::getInstance();
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'lastName' = :lastName");
+        $stmtHandle->bindValue(":lastName", $updLast);
+        $success = $stmtHandle->execute();
+
+        if (!$success)
+        {
+            throw new \PDOException("Something went wrong with the update.");
+        }
+    }
+
+    public function updateFood($userName,$updFood)
+    {
+        $dbh = DatabaseConnection::getInstance();
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'foodPreference' = :foodPreference");
+        $stmtHandle->bindValue(":foodPreference", $updFood);
+        $success = $stmtHandle->execute();
+
+        if (!$success)
+        {
+            throw new \PDOException("Something went wrong with the update.");
+        }
+    }
+
+    public function updateDrink($userName,$updDrink)
+    {
+        $dbh = DatabaseConnection::getInstance();
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'drinkPreference' = :drinkPreference");
+        $stmtHandle->bindValue(":drinkPreference", $updDrink);
+        $success = $stmtHandle->execute();
+
+        if (!$success)
+        {
+            throw new \PDOException("Something went wrong with the update.");
+        }
+    }
+
+    public function getUser()
+    {
+        //TODO: get user function
     }
 
     /**
@@ -100,14 +165,6 @@ class User
     public function setUserName($userName)
     {
         $this->userName = $userName;
-    }
-
-    /**
-     * @param mixed $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
     }
 
     /**
@@ -157,14 +214,6 @@ class User
     public function getUserName()
     {
         return $this->userName;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
     }
 
     /**
