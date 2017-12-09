@@ -4,7 +4,7 @@
  * User: iamcaptaincode
  */
 
-namespace CoffeeRunner\Utilities;
+namespace Scholarship\Utilities;
 
 
 class DatabaseConnection
@@ -13,7 +13,7 @@ class DatabaseConnection
     private static $host = "localhost";
     private static $dbname = "coffeerunner";
     private static $user = "coffeerunner";
-    private static $pass = "pebkac!";
+    private static $pass = "pebkac";
 
     private function __construct()
     {

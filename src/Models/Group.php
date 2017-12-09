@@ -7,16 +7,14 @@
  */
 
 namespace CoffeeRunner\Models;
+//use CoffeeRunner\Utilities;
 
-
-use CoffeeRunner\Utilities\DatabaseConnection;
-
-class group
+class Group implements \JsonSerializable
 {
     private $groupID;
     private $groupName;
-    private $groupDealer;
-    private $groupMule;
+    private $groupPresident;
+    private $groupRunner;
 
     public function __construct()
     {
@@ -24,10 +22,18 @@ class group
 
     }
 
-    /**
-     * deletes the group
-     *
-     */
+    function jsonSerialize()
+    {
+        $rtn= array(
+            'groupID' => $this->groupID,
+            '$groupName' => $this->groupName,
+            'groupPresident' => $this->groupPresident,
+            'groupRunner' => $this->groupRunner
+        );
+        return $rtn;
+    }
+
+
 
     public function createGroup()
     {
@@ -60,7 +66,7 @@ class group
     public function deleteGroup()
     {
         try {
-                if(empty($this->groupID))
+                if(empty($this->getGroupID()))
             {
                 die("error groupID was not provided");
             }
@@ -85,8 +91,10 @@ class group
      *
      */
 
-    public function changePresident()
+    public function changePresident($arg)
     {
+
+
         try {
             if(empty($this->groupID)){
                 die("error: groupID was not provided");
@@ -98,7 +106,7 @@ class group
                     SET 'groupDealer'= :groupDealer
                     WHERE 'groupID' = :groupID");
                 $stmtHandle->bindValue(":groupDealer", $this->groupDealer);
-                $stmtHandle->bindValue(":groupID",$this->groupID);
+                $stmtHandle->bindValue(":groupID",$this->getGroupID());
 
                 $success = $stmtHandle->execute();
 
@@ -149,40 +157,6 @@ class group
      * invites members to the group
      */
 
-    public function inviteNewMembers()
-    {
-        try {
-            if (empty($this->groupID))
-            {
-                die("error: The groupID was not provided");
-            }
-            else
-            {
-                $dbh = DatabaseConnection::getInstance();
-                $stmtHandle = $dbh->prepare("INSERT INTO 'invite'(
-                'inviteID',
-                'groupID',
-                'fromUserID',
-                'toUserID',
-                'status'
-                )
-                VALUES(:inviteID,:groupID,:fromUserID,:toUserID,:status)");
-                $stmtHandle->bindValue(":groupID",$this->groupID);
-                $stmtHandle->bindValue(":fromUserID",$this->fromUserID);
-                $stmtHandle->bindValue(":toUserID",$this->toUserID);
-                $stmtHandle->bindValue(":status",$this->status);
-
-                $success = $stmtHandle->execute();
-
-                if(!$success) {
-                    throw new\PDOException("SQL query execution failed");
-                }
-            }
-        }
-        catch(\PDOException $e){
-            throw $e;
-        }
-    }
 
     /**
      * @return mixed

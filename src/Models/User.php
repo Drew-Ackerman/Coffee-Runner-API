@@ -43,7 +43,7 @@ class User implements \JsonSerializable
      * deletes a user
      */
 
-    public function create()
+    public function createUser()
     {
         try
         {
@@ -64,14 +64,12 @@ class User implements \JsonSerializable
             $stmtHandle->bindValue(":foodPreference",$this->foodPreference);
             $stmtHandle->bindValue(":drinkPreference",$this->drinkPreference);
 
-
             $success = $stmtHandle->execute();
 
             if (!$success)
             {
                 throw new \PDOException("sql query execution failed");
             }
-
         }
         catch (\Exception $e)
         {
@@ -89,8 +87,12 @@ class User implements \JsonSerializable
             $stmtHandle->bindValue(":", $arg);
             $success = $stmtHandle->execute();
 
-            if (!$success) {
+            if (!$success) { //TODO: does the model or controller handle the error handling
                 throw new \PDOException("user delete failed.");
+            }
+            else
+            {
+                return $success;
             }
 
         }
@@ -100,11 +102,12 @@ class User implements \JsonSerializable
         }
     }
 
-    public function updateFirst($userName,$updFirst)
+    public function updateFirstName($username,$updFirst)
     {
         $dbh = DatabaseConnection::getInstance();
-        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName");
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName WHERE username = :username");
         $stmtHandle->bindValue(":firstName", $updFirst);
+        $stmtHandle->bindValue(":username", $username);
         $success = $stmtHandle->execute();
 
         if (!$success)
@@ -112,10 +115,21 @@ class User implements \JsonSerializable
             throw new \PDOException("Something went wrong with the update.");
         }
 
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
+        $rtnHandle -> bindValue(":username",$username);
 
+        $success = $rtnHandle->execute();
+        if (!success)
+        {
+            throw new \PDOException("error: failed to execute sql query");
+        }
+        else
+        {
+            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+        }
     }
 
-    public function updateLast($userName,$updLast)
+    public function updateLast($username,$updLast)
     {
         $dbh = DatabaseConnection::getInstance();
         $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'lastName' = :lastName");
@@ -126,9 +140,24 @@ class User implements \JsonSerializable
         {
             throw new \PDOException("Something went wrong with the update.");
         }
+
+
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
+        $rtnHandle -> bindValue(":username",$username);
+
+        $success = $rtnHandle->execute();
+        if (!success)
+        {
+            throw new \PDOException("error: failed to execute sql query");
+        }
+        else
+        {
+            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+        }
+
     }
 
-    public function updateFood($userName,$updFood)
+    public function updateFood($username,$updFood)
     {
         $dbh = DatabaseConnection::getInstance();
         $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'foodPreference' = :foodPreference");
@@ -139,9 +168,22 @@ class User implements \JsonSerializable
         {
             throw new \PDOException("Something went wrong with the update.");
         }
+
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
+        $rtnHandle -> bindValue(":username",$username);
+
+        $success = $rtnHandle->execute();
+        if (!success)
+        {
+            throw new \PDOException("error: failed to execute sql query");
+        }
+        else
+        {
+            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+        }
     }
 
-    public function updateDrink($userName,$updDrink)
+    public function updateDrink($username,$updDrink)
     {
         $dbh = DatabaseConnection::getInstance();
         $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'drinkPreference' = :drinkPreference");
@@ -152,97 +194,83 @@ class User implements \JsonSerializable
         {
             throw new \PDOException("Something went wrong with the update.");
         }
+
+
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
+        $rtnHandle -> bindValue(":username",$username);
+
+        $success = $rtnHandle->execute();
+        if (!success)
+        {
+            throw new \PDOException("error: failed to execute sql query");
+        }
+        else
+        {
+            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+        }
     }
 
-    public function getUser()
-    {
-        //TODO: get user function
-    }
 
-    /**
-     * @param mixed $userName
-     */
     public function setUserName($userName)
     {
         $this->userName = $userName;
     }
 
-    /**
-     * @param mixed $firstName
-     */
+
     public function setFirstName($firstName)
     {
         $this->firstName = $firstName;
     }
 
-    /**
-     * @param mixed $lastName
-     */
+
     public function setLastName($lastName)
     {
         $this->lastName = $lastName;
     }
 
-    /**
-     * @param mixed $foodPreference
-     */
+
     public function setFoodPreference($foodPreference)
     {
         $this->foodPreference = $foodPreference;
     }
 
-    /**
-     * @param mixed $drinkPreference
-     */
+
     public function setDrinkPreference($drinkPreference)
     {
         $this->drinkPreference = $drinkPreference;
     }
 
 
-    /**
-     * @return mixed
-     */
     public function getUserID()
     {
         return $this->userID;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getUserName()
     {
         return $this->userName;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getFirstName()
     {
         return $this->firstName;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getLastName()
     {
         return $this->lastName;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getFoodPreference()
     {
         return $this->foodPreference;
     }
 
-    /**
-     * @return mixed
-     */
+
     public function getDrinkPreference()
     {
         return $this->drinkPreference;

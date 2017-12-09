@@ -9,7 +9,7 @@
 namespace CoffeeRunner\Models;
 
 
-class groupUser
+class GroupUser implements \JsonSerializable
 {
     private $groupUserID;
     private $groupID;
@@ -21,17 +21,29 @@ class groupUser
 
     }
 
-    /**
-     *Delete user
-     */
 
-    public function deletegroupUser()
+    function jsonSerialize()
+    {
+        $rtn= array(
+            'groupUserID' => $this->groupID,
+            '$groupID' => $this->groupID,
+            'userID' => $this->userID,
+        );
+        return $rtn;
+    }
+
+    public function createGroupUser()
+    {
+        //TODO: creates an entry into the db, use groupUserID, groupID, userID
+    }
+
+    public function deleteGroupUser()
     {
         try
         {
             if (empty($this->groupUserID))
             {
-                die("error: the wnumber is not provided");
+                die("error: the groupUserID is not provided");
             }
             else
             {

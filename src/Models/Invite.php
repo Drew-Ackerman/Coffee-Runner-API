@@ -9,7 +9,9 @@
 namespace CoffeeRunner\Models;
 
 
-class Invite
+use Scholarship\Utilities\DatabaseConnection;
+
+class Invite implements \JsonSerializable
 {
     private $inviteID;
     private $groupID;
@@ -23,20 +25,103 @@ class Invite
 
     }
 
+    function jsonSerialize()
+    {
+        $rtn= array(
+            'inviteID' => $this->groupID,
+            '$groupID' => $this->groupID,
+            'fromUserID' => $this->fromUserID,
+            'toUserID' => $this->toUserID,
+            'status' => $this->status
+        );
+        return $rtn;
+    }
+
     /**
      * send Invite
      */
+
+    public function createInvite()
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "INSERT INTO 'User'(
+                'groupID',
+                'fromUserID',
+                'toUserID',
+                'status') 
+                VALUES (:groupID, :fromUserID, :toUserID,:status)");
+
+            $stmtHandle->bindValue(":groupID", $this->groupID);
+            $stmtHandle->bindValue(":fromUserID", $this->fromUserID);
+            $stmtHandle->bindValue(":toUserID", $this->toUserID);
+            $stmtHandle->bindValue(":status", $this->status);
+
+            $success = $stmtHandle->execute();
+
+            if (!$success)
+            {
+                throw new \PDOException("sql query execution failed");
+            }
+
+        }
+        catch (\Exception $e)
+        {
+            throw $e;
+        }
+
+    }
+
+
+    public function inviteNewMembers()
+    {
+        try {
+            if (empty($this->groupID))
+            {
+                die("error: The groupID was not provided");
+            }
+            else
+            {
+                $dbh = DatabaseConnection::getInstance();
+                $stmtHandle = $dbh->prepare("INSERT INTO 'invite'(
+                'inviteID',
+                'groupID',
+                'fromUserID',
+                'toUserID',
+                'status'
+                )
+                VALUES(:inviteID,:groupID,:fromUserID,:toUserID,:status)");
+                $stmtHandle->bindValue(":groupID",$this->groupID);
+                $stmtHandle->bindValue(":fromUserID",$this->fromUserID);
+                $stmtHandle->bindValue(":toUserID",$this->toUserID);
+                $stmtHandle->bindValue(":status",$this->status);
+
+                $success = $stmtHandle->execute();
+
+                if(!$success) {
+                    throw new\PDOException("SQL query execution failed");
+                }
+            }
+        }
+        catch(\PDOException $e){
+            throw $e;
+        }
+    }
+
+
     public function sendInvite()
     {
-
+        //TODO: create logic to send invite
     }
 
     /**
      * delete or cancel the invite
      */
-    public function cancelInvite()
+    public function deleteInvite()
     {
-
+        //TODO: create logic to cancel invite
     }
 
     /**
