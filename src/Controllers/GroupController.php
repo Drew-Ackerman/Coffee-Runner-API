@@ -10,7 +10,7 @@ namespace CoffeeRunner\Controllers;
 
 class GroupController
 {
-    public function createGroup(){
+    public static function createGroup(){
 
     }
 

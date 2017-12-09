@@ -9,6 +9,8 @@
 namespace CoffeeRunner\Controllers;
 
 # TODO: Ask about best practice for the status field, set in databse or pass in on creation
+use CoffeeRunner\Models\Invite;
+
 class InviteController
 {
 
@@ -20,18 +22,18 @@ class InviteController
 //    private $toUserID;
 //    private $status = "Pending";
 
-    public function sendInvite(){
-
+    public static function sendInvite($args){
+        $invite = new Invite();
     }
 
     #TODO: patch, set, change or update?
-    public function patchStatus(){
-
+    public function patchStatus($args){
+        $invite = new Invite();
     }
 
     #TODO: Tell kyle about this addition
     #This is just a method to delete/cancel a sent invite.
     public function deleteInvite($inviteID){
-
+        $invite = new Invite();
     }
 }

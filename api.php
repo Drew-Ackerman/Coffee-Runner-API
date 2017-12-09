@@ -73,6 +73,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
 
     $createGroup = function ($args) {
         $groupController = new GroupController();
+        $json = (object) json_decode(file_get_contents('php://input'), true);
+        $groupController::createGroup();
     };
 
     $deleteGroup = function ($args) {
@@ -81,34 +83,39 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
 
     $createInvite = function ($args) {
         $inviteController = new InviteController();
+        $json = (object) json_decode(file_get_contents('php://input'), true);
+        $inviteController::sendInvite($args);
     };
 
     $updateInviteStatus = function ($args) {
         $inviteController = new InviteController();
+        return $inviteController->patchStatus($args);
+
     };
 
     $deleteInvite = function ($args) {
         $inviteController = new InviteController();
+        return $inviteController->deleteInvite($args);
     };
 
     /******User Routes******/
     $r->addRoute(Methods::POST, $baseURI . "/user", $handleCreateUser);
-    $r->addRoute(Methods::DELETE, $baseURI . "/user", $handleDeleteUser);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/foodpreference", $updateUserFoodPreference);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/drinkpreference", $updateUserDrinkPreference);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/firstname", $updateUserFirstName);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/lastname", $updateUserLastName);
+    $r->addRoute(Methods::DELETE, $baseURI . "/user/{userID:\d+}", $handleDeleteUser);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/foodpreference/{userID:\d+}", $updateUserFoodPreference);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/drinkpreference/{userID:\d+}", $updateUserDrinkPreference);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/firstname/{userID:\d+}", $updateUserFirstName);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/lastname/{userID:\d+}", $updateUserLastName);
 
     /******Group Routes******/
-    $r->addRoute(Methods::PATCH, $baseURI . "/group/president", $updateGroupPresident);
-    $r->addRoute(Methods::PATCH, $baseURI . "/group/runner", $updateGroupRunner);
+    $r->addRoute(Methods::PATCH, $baseURI . "/group/{groupID:\d+}/president", $updateGroupPresident);
+    $r->addRoute(Methods::PATCH, $baseURI . "/group/{groupID:\d+}/runner", $updateGroupRunner);
     $r->addRoute(Methods::POST, $baseURI . "/group", $createGroup);
-    $r->addRoute(Methods::DELETE, $baseURI . "/group", $deleteGroup);
-    $r->addRoute(Methods::POST, $baseURI . "/group/invite", $createInvite);
-    $r->addRoute(Methods::PATCH, $baseURI . "/group/invite/status", $updateInviteStatus);
+    $r->addRoute(Methods::DELETE, $baseURI . "/group/{groupID:\d+}", $deleteGroup);
+    $r->addRoute(Methods::PATCH, $baseURI . "/group/{groupID:\d+}/invite/status", $updateInviteStatus);
 
     /******Invite Routes******/
-    $r->addRoute(Methods::POST, $baseURI . "/invite", $deleteInvite);
+    $r->addRoute(Methods::POST, $baseURI . "/invite", $createInvite);
+    $r->addRoute(Methods::DELETE, $baseURI . "/invite", $deleteInvite);
 
 });
 
