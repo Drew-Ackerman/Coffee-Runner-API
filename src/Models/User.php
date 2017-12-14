@@ -11,11 +11,6 @@ namespace CoffeeRunner\Models;
 
 use CoffeeRunner\Utilities\DatabaseConnection;
 
-#TODO: all update methods use userID instead of username now.
-#TODO: discuss if deleteUser should use an instance for the userID instead of it being passed in.
-#TODO: discuss if all applicable methods should use an instance for ease of accessing attributes.
-#TODO: make sure all methods have a return value specified if best
-#TODO: method updateLast should be updateLastName
 
 class User implements \JsonSerializable
 {
@@ -87,8 +82,8 @@ class User implements \JsonSerializable
         {
 
             $dbh = DatabaseConnection::getInstance();
-            $stmtHandle = $dbh->prepare("DELETE FROM 'User' WHERE 'username' = :username");
-            $stmtHandle->bindValue(":", $this->userName);
+            $stmtHandle = $dbh->prepare("DELETE FROM 'User' WHERE 'userID' = :userID");
+            $stmtHandle->bindValue(":", $this->userID);
             $success = $stmtHandle->execute();
 
             if (!$success) {
@@ -108,8 +103,7 @@ class User implements \JsonSerializable
 
 
     public function getUser($userID) : User{
-        #TODO retrieve a user object from the database using the userID
-        try
+         try
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
@@ -128,11 +122,11 @@ class User implements \JsonSerializable
         }
     }
 
-    public function updateFirstName($updFirst)
+    public function updateFirstName($updateFirst)
     {
         $dbh = DatabaseConnection::getInstance();
-        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName WHERE username = :userID");
-        $stmtHandle->bindValue(":firstName", $updFirst);
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName WHERE userID = :userID");
+        $stmtHandle->bindValue(":firstName", $updateFirst);
         $stmtHandle->bindValue(":userID", $this->userID);
         $success = $stmtHandle->execute();
 
@@ -155,12 +149,12 @@ class User implements \JsonSerializable
         }
     }
 
-    public function updateLastName($updLast)
+    public function updateLastName($updateLast)
     {
         $dbh = DatabaseConnection::getInstance();
         $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'lastName' = :lastName WHERE 'userID' = :userID");
         $stmtHandle->bindValue(":userID",$this->userID);
-        $stmtHandle->bindValue(":lastName", $updLast);
+        $stmtHandle->bindValue(":lastName", $updateLast);
         $success = $stmtHandle->execute();
 
         if (!$success)
@@ -183,12 +177,12 @@ class User implements \JsonSerializable
 
     }
 
-    public function updateFood($updFood)
+    public function updateFood($updateFood)
     {
         $dbh = DatabaseConnection::getInstance();
         $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'foodPreference' = :foodPreference WHERE 'userID' = :userID");
         $stmtHandle->bindValue(":userID",$this->userID);
-        $stmtHandle->bindValue(":foodPreference", $updFood);
+        $stmtHandle->bindValue(":foodPreference", $updateFood);
         $success = $stmtHandle->execute();
 
         if (!$success)
@@ -210,11 +204,11 @@ class User implements \JsonSerializable
         }
     }
 
-    public function updateDrink($updDrink)
+    public function updateDrink($updateDrink)
     {
         $dbh = DatabaseConnection::getInstance();
         $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'drinkPreference' = :drinkPreference WHERE 'userID' = :userID");
-        $stmtHandle->bindValue(":drinkPreference", $updDrink);
+        $stmtHandle->bindValue(":drinkPreference", $updateDrink);
         $stmtHandle -> bindValue(":userID",$this->userID);
         $success = $stmtHandle->execute();
 
