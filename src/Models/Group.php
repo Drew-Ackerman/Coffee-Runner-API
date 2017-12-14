@@ -86,20 +86,39 @@ class Group implements \JsonSerializable
         }
     }
 
+//SELECT * From groupUser Join user ON groupUser.userID = user.userID
+// WHERE groupUser.groupID = 2 AND userName = 'Kyle'
+    public function getUserByUsername ($groupID,$username)
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "SELECT * FROM 'groupUser' 
+                          JOIN 'user' ON 'groupUser.userID' = 'user.userID'
+                          WHERE 'groupUser.groupID' = :groupID AND 'username' = :username");
+            $stmtHandle->bindValue(":groupID", $groupID);
+            $stmtHandle->bindValue(":username", $username);
+            $success = $stmtHandle->execute();
+            if(!$success){
+                throw new \PDOException("sql query execution failed");
+            }
+            $groupUser = $stmtHandle->fetchAll(\PDO::FETCH_CLASS,"CoffeeRunner/Models/Group");
+            return $groupUser;
+        }
+        catch(\Exception $e)
+        {
+            throw $e;
+        }
+    }
+
     public function deleteGroup()
     {
         try {
-                if(empty($this->getGroupID()))
-            {
-                die("error groupID was not provided");
-            }
-            else {
-                $dbh = DatabaseConnection::getInstance();
-                $stmtHandle = $dbh->prepare("DELETE FROM '[Group]' WHERE 'groupID' = :groupID");
-                $stmtHandle -> bindValue(":groupID", $this->getGroupID());
-                $success = $stmtHandle->execute();
-            }
-
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare("DELETE FROM '[Group]' WHERE 'groupID' = :groupID");
+            $stmtHandle -> bindValue(":groupID", $this->getGroupID());
+            $success = $stmtHandle->execute();
             if(!$success) {
                 throw new \PDOException("Group delete failed");
             }
@@ -110,12 +129,7 @@ class Group implements \JsonSerializable
         }
     }
 
-    /**
-     * changes the president
-     *
-     */
-
-    public function changePresident($arg)
+    public function changePresident($newPresident)
     {
 
 
@@ -128,7 +142,7 @@ class Group implements \JsonSerializable
                 $stmtHandle = $dbh->prepare(
                     "UPDATE '[Group]' SET 'groupPresident'= :groupPresident
                     WHERE 'groupID' = :groupID");
-                $stmtHandle->bindValue(":groupPresident", $this->groupPresident);
+                $stmtHandle->bindValue(":groupPresident", $newPresident);
                 $stmtHandle->bindValue(":groupID",$this->getGroupID());
 
                 $success = $stmtHandle->execute();
@@ -136,6 +150,7 @@ class Group implements \JsonSerializable
                 if(!$success) {
                     throw new \PDOException("Group President update failed");
                 }
+                return $success;
             }
 
         }
@@ -148,7 +163,7 @@ class Group implements \JsonSerializable
      * change the runner of the group
      */
 
-    public function changeRunner()
+    public function changeRunner($updateRunner)
     {
         try {
             if(empty($this->groupID)){
@@ -160,7 +175,7 @@ class Group implements \JsonSerializable
                     "UPDATE '[Group]'
                     SET 'groupRunner'= :groupRunner
                     WHERE 'groupID' = :groupID");
-                $stmtHandle->bindValue(":groupRunner", $this->groupRunner);
+                $stmtHandle->bindValue(":groupRunner", $updateRunner);
                 $stmtHandle->bindValue(":groupID",$this->groupID);
 
                 $success = $stmtHandle->execute();
@@ -168,6 +183,7 @@ class Group implements \JsonSerializable
                 if(!$success) {
                     throw new \PDOException("Group Runner update failed");
                 }
+                return $success;
             }
 
         }

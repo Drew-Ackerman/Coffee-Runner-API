@@ -103,7 +103,7 @@ class User implements \JsonSerializable
 
 
     public function getUser($userID) : User{
-         try
+        try
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(

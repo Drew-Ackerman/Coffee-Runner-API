@@ -11,14 +11,12 @@ namespace CoffeeRunner\Models;
 
 use CoffeeRunner\Utilities\DatabaseConnection;
 
-#TODO: So we are going to set the status of a new invite to pending as the default. We can do it through database rules, or through a constant in the code. This is in the createInvite method
-#TODO: need a way to update the status of an invite.
-#TODO: Discuss the logic of deleting an invite
+
 
 class Invite implements \JsonSerializable
 {
     const STATUS_DECLINED = "Declined";
-    const STATUS_ACEEPTED = "Accepted";
+    const STATUS_ACCEPTED = "Accepted";
     const STATUS_PENDING = "Pending";
 
     private $inviteID;
@@ -65,7 +63,7 @@ class Invite implements \JsonSerializable
             $stmtHandle->bindValue(":groupID", $this->groupID);
             $stmtHandle->bindValue(":fromUserID", $this->fromUserID);
             $stmtHandle->bindValue(":toUserID", $this->toUserID);
-            $stmtHandle->bindValue(":status", $this->status);
+            $stmtHandle->bindValue(":status",self::STATUS_PENDING);
 
             $success = $stmtHandle->execute();
 
@@ -80,6 +78,44 @@ class Invite implements \JsonSerializable
             throw $e;
         }
 
+    }
+#TODO: need a way to update the status of an invite.
+    public function updateInviteStatus($updateStatus)
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare("UPDATE 'invite' SET 'status' = :status WHERE 'inviteID' = :inviteID");
+            $stmtHandle->bindValue(":status",$updateStatus);
+            $stmtHandle->bindValue(":inviteID", $this->inviteID);
+
+            $success = $stmtHandle->execute();
+
+            if(!$success) {
+                throw new\PDOException("SQL query execution failed");
+            }
+            return $success;
+        }
+        catch(\PDOException $e){
+            throw $e;
+        }
+    }
+
+    public function deleteInvite()
+    {
+        try {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare("DELETE FROM 'invite' WHERE 'inviteID' = :inviteID");
+            $stmtHandle -> bindValue(":inviteID", $this->inviteID);
+            $success = $stmtHandle->execute();
+            if(!$success) {
+                throw new \PDOException("invite delete failed");
+            }
+            return $success;
+        }
+        catch(\PDOException $e){
+            throw $e;
+        }
     }
 
 
@@ -121,16 +157,10 @@ class Invite implements \JsonSerializable
 
     public function sendInvite()
     {
-        //TODO: create logic to send invite
+        //This exists but we don't know what to do before we have an application
     }
 
-    /**
-     * delete or cancel the invite
-     */
-    public function deleteInvite()
-    {
-        //TODO: create logic to cancel invite
-    }
+
 
     /**
      * @return mixed
@@ -140,11 +170,10 @@ class Invite implements \JsonSerializable
         return $this->inviteID;
     }
 
-    /**
-     * @param mixed $inviteID
-     */
+
     public function setInviteID($inviteID)
     {
+        $inviteID = filter_var($inviteID,FILTER_SANITIZE_STRING);
         $this->inviteID = $inviteID;
     }
 
@@ -161,6 +190,7 @@ class Invite implements \JsonSerializable
      */
     public function setGroupID($groupID)
     {
+        $groupID = filter_var($groupID,FILTER_SANITIZE_STRING);
         $this->groupID = $groupID;
     }
 
@@ -177,6 +207,7 @@ class Invite implements \JsonSerializable
      */
     public function setFromUserID($fromUserID)
     {
+        $fromUserID = filter_var($fromUserID,FILTER_SANITIZE_STRING);
         $this->fromUserID = $fromUserID;
     }
 
@@ -193,6 +224,7 @@ class Invite implements \JsonSerializable
      */
     public function setToUserID($toUserID)
     {
+        $toUserID = filter_var($toUserID,FILTER_SANITIZE_STRING);
         $this->toUserID = $toUserID;
     }
 
@@ -209,6 +241,7 @@ class Invite implements \JsonSerializable
      */
     public function setStatus($status)
     {
+        $status = filter_var($status,FILTER_SANITIZE_STRING);
         $this->status = $status;
     }
 

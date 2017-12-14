@@ -10,8 +10,6 @@ namespace CoffeeRunner\Models;
 use CoffeeRunner\Utilities\DatabaseConnection;
 
 
-#TODO: deleteGroupUser should check both groupID and userID
-
 class GroupUser implements \JsonSerializable
 {
     private $groupUserID;
@@ -36,7 +34,6 @@ class GroupUser implements \JsonSerializable
 //---------------------------Check this again---------------------------------
     public function createGroupUser()
     {
-        //TODO: creates an entry into the db, use groupUserID, groupID, userID
         try
         {
             $dbh = DatabaseConnection::getInstance();
@@ -103,6 +100,7 @@ class GroupUser implements \JsonSerializable
                 if (!$success) {
                     throw new \PDOException("user full delete unsuccessful.");
                 }
+                return $success;
             }
         }
         catch (\PDOException $e)
@@ -117,6 +115,12 @@ class GroupUser implements \JsonSerializable
     public function getGroupUserID()
     {
         return $this->groupUserID;
+    }
+
+    public function setGroupID($groupID)
+    {
+        $groupID = filter_var($groupID,FILTER_SANITIZE_STRING);
+        $this->groupID = $groupID;
     }
 
     /**
