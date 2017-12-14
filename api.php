@@ -37,91 +37,126 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
 
     };
 
-    $handleCreateUser = function ($args) {
+
+    /****** USER CLOSURES ******/
+    $handleCreateUser = function () {
+        #TODO: validate the json
+        $json = (object) json_decode(file_get_contents('php://input'));
         $userController = new UserController();
-        $json = (object) json_decode(file_get_contents('php://input'), true);
-        $userController::createUser($json);
+        $userController->createUser($json);
     };
 
+
     $handleDeleteUser = function ($args) {
+        $userID = $args['userID'];
+        #TODO: Write validation for the $userID
         $userController = new UserController();
+        return $userController->deleteUser($userID);
     };
 
     $updateUserFoodPreference = function ($args) {
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $userID = $args['userID'];
         $userController = new UserController();
+        $userController->changeFoodPreference($userID, $json);
     };
 
+    #TODO: Validate the json
     $updateUserDrinkPreference = function ($args) {
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $userID = $args['userID'];
         $userController = new UserController();
+        $userController->changeDrinkPreference($userID, $json);
     };
 
     $updateUserFirstName = function ($args) {
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $userID = $args['userID'];
         $userController = new UserController();
+        $userController->changeFirstName($userID, $json);
     };
 
     $updateUserLastName = function ($args) {
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $userID = $args['userID'];
         $userController = new UserController();
+        $userController->changeLastName($userID, $json);
     };
 
+
+    /****** GROUP CLOSURES ******/
     $updateGroupPresident = function ($args) {
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $groupID = $args['groupID'];
         $groupController = new GroupController();
-        #TODO: pass in president arg
-        $groupController->changePresident();
+        $groupController->changePresident($groupID, $json);
     };
 
     $updateGroupRunner = function ($args) {
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $groupID = $args['groupID'];
         $groupController = new GroupController();
-        #TODO: pass in runner arg
-        $groupController->changeRunner();
+        return $groupController->changePresident($groupID, $json);
     };
 
-    $createGroup = function ($args) {
+    $createGroup = function () {
+        $json = (object) json_decode(file_get_contents('php://input'));
         $groupController = new GroupController();
-        $json = (object) json_decode(file_get_contents('php://input'), true);
-        $groupController::createGroup($json);
+        return $groupController->createGroup($json);
     };
 
     $deleteGroup = function ($args) {
+        $groupID = $args['groupID'];
         $groupController = new GroupController();
+        return $groupController->deleteGroup($groupID);
     };
 
+    $removeUserFromGroup = function ($args){
+        $groupID = $args['groupID'];
+        $userID = $args['userID'];
+        $groupController = new GroupController();
+        return $groupController->removeUserFromGroup($groupID, $userID);
+    };
+
+    /**** INVITE CLOSURES ****/
     $createInvite = function ($args) {
         $inviteController = new InviteController();
-        $json = (object) json_decode(file_get_contents('php://input'), true);
-        $inviteController::sendInvite($args);
+        $json = (object) json_decode(file_get_contents('php://input'));
+        $inviteController->sendInvite($json);
     };
 
     $updateInviteStatus = function ($args) {
+        $inviteID = $args['inviteID'];
+        $json = (object) json_decode(file_get_contents('php://input'));
         $inviteController = new InviteController();
-        return $inviteController->patchStatus($args);
-
+        return $inviteController->updateStatus($inviteID, $json);
     };
 
     $deleteInvite = function ($args) {
+        $inviteID = $args['inviteID'];
         $inviteController = new InviteController();
-        return $inviteController->deleteInvite($args);
+        return $inviteController->deleteInvite($inviteID);
     };
 
     /******User Routes******/
-    #TODO: JENSON, Ask if i need the userID from comparison because of pulling username from token for validation
     $r->addRoute(Methods::POST, $baseURI . "/user", $handleCreateUser);
     $r->addRoute(Methods::DELETE, $baseURI . "/user/{userID:\d+}", $handleDeleteUser);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/foodpreference/{userID:\d+}", $updateUserFoodPreference);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/drinkpreference/{userID:\d+}", $updateUserDrinkPreference);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/firstname/{userID:\d+}", $updateUserFirstName);
-    $r->addRoute(Methods::PATCH, $baseURI . "/user/lastname/{userID:\d+}", $updateUserLastName);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/{userID:\d+}/foodpreference", $updateUserFoodPreference);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/{userID:\d+}/drinkpreference", $updateUserDrinkPreference);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/{userID:\d+}/firstname", $updateUserFirstName);
+    $r->addRoute(Methods::PATCH, $baseURI . "/user/{userID:\d+}/lastname", $updateUserLastName);
 
     /******Group Routes******/
     $r->addRoute(Methods::PATCH, $baseURI . "/group/{groupID:\d+}/president", $updateGroupPresident);
     $r->addRoute(Methods::PATCH, $baseURI . "/group/{groupID:\d+}/runner", $updateGroupRunner);
     $r->addRoute(Methods::POST, $baseURI . "/group", $createGroup);
     $r->addRoute(Methods::DELETE, $baseURI . "/group/{groupID:\d+}", $deleteGroup);
-    $r->addRoute(Methods::PATCH, $baseURI . "/group/{groupID:\d+}/invite/status", $updateInviteStatus);
+    $r->addRoute(Methods::DELETE, $baseURI . "/group/{groupID:\d+}/remove/{userID:\d+", $removeUserFromGroup);
 
     /******Invite Routes******/
     $r->addRoute(Methods::POST, $baseURI . "/invite", $createInvite);
-    $r->addRoute(Methods::DELETE, $baseURI . "/invite", $deleteInvite);
-
+    $r->addRoute(Methods::DELETE, $baseURI . "/invite/{inviteID:\d+}", $deleteInvite);
+    $r->addRoute(Methods::PATCH, $baseURI . "/invite/{inviteID:\d+}/status", $updateInviteStatus);
 });
 
 

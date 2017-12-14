@@ -11,6 +11,12 @@ namespace CoffeeRunner\Models;
 
 use Scholarship\Utilities\DatabaseConnection;
 
+#TODO: all update methods use userID instead of username now.
+#TODO: discuss if deleteUser should use an instance for the userID instead of it being passed in.
+#TODO: discuss if all applicable methods should use an instance for ease of accessing attributes.
+#TODO: make sure all methods have a return value specified if best
+#TODO: method updateLast should be updateLastName
+
 class User implements \JsonSerializable
 {
 
@@ -39,9 +45,7 @@ class User implements \JsonSerializable
         );
         return $rtn;
     }
-    /**
-     * deletes a user
-     */
+
 
     public function createUser()
     {
@@ -77,6 +81,7 @@ class User implements \JsonSerializable
         }
     }
 
+
     public function deleteUser($arg)
     {
         try
@@ -87,7 +92,7 @@ class User implements \JsonSerializable
             $stmtHandle->bindValue(":", $arg);
             $success = $stmtHandle->execute();
 
-            if (!$success) { //TODO: does the model or controller handle the error handling
+            if (!$success) {
                 throw new \PDOException("user delete failed.");
             }
             else
@@ -100,6 +105,11 @@ class User implements \JsonSerializable
         {
             throw $e;
         }
+    }
+
+
+    public function getUser($userID) : User{
+        #TODO retrieve a user object from the database using the userID
     }
 
     public function updateFirstName($username,$updFirst)

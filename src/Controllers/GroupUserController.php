@@ -8,17 +8,24 @@
 
 namespace CoffeeRunner\Controllers;
 
-
+use CoffeeRunner\Models\Group;
 use CoffeeRunner\Models\groupUser;
 
 class GroupUserController
 {
-
-    public function createGroupUser($user, $group){
-        #TODO create groupuser
-        GroupUser::createGroupUser($user, $group);
+    public function createGroupUser($userID, $groupID){
+        #This methods will create a user for a group
+        $groupUser = new GroupUser();
+        $groupUser->setGroupID($groupID);
+        $groupUser->setUserID($userID);
+        return $groupUser->createGroupUser();
     }
-    public function deleteGroupUser(){
-        #TODO delete Groupuser
+
+    public function deleteGroupUser($userID, $groupID){
+        #This method should delete a given user from a given group.
+        $groupUser = new GroupUser();
+        $groupUser->setGroupID($groupID);
+        $groupUser->setUserID($userID);
+        return $groupUser->deleteGroupUser();
     }
 }

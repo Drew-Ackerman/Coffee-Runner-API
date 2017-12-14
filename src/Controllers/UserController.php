@@ -11,65 +11,100 @@ namespace CoffeeRunner\Controllers;
 use CoffeeRunner\Models\User;
 use CoffeeRunner\Models\Token as Token;
 
+#TODO: do validation on json
+#TODO: do validation on args
+
 class UserController
 {
-    public static function createUser($json){
+    public function createUser($json){
         $newUser = new User();
-        $newUser->setFirstName();
-        $newUser->setLastName();
-        $newUser->setUserName();
-        $newUser->setDrinkPreference();
-        $newUser->setFoodPreference();
-        $newUser->create();
+        
+        $newUser->setFirstName($json->firstName);
+        $newUser->setLastName($json->lastName);
+        $newUser->setUserName($json->username);
+        $newUser->setDrinkPreference($json->drinkPreference);
+        $newUser->setFoodPreference($json->foodPreference);
+        return $newUser->createUser();
     }
 
-    public function deleteUser(){
-        $userName = Token::getUsernameFromToken();
-        $newUser = User::deleteUser($userName);
-        return $newUser;
-    }
-
-    public function changeFoodPreference($newFoodPref){
-        if(empty($newFirstName)){
-            http_response_code(400);
-            return "Supplied first name is not valid.";
+    public function deleteUser($userID){
+        $userModel = new User();
+        $user = $userModel->getUser($userID);
+        if($user->getUserName() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized deletion of user";
         }
-        $userName = Token::getUsernameFromToken();
+        return $userModel->deleteUser(); #TODO
+    }
+
+    public function changeFoodPreference($userID, $json){
+        $newFoodPref = $json->foodPreference;
+        $user = new User();
+        $user->getUser($userID);
+
+        if(empty($newFoodPref)) {
+            http_response_code(400);
+            return "Supplied food preference is not valid.";
+        }
+        if($user->getUserName() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized user";
+        }
         $newFoodPref = filter_var($newFoodPref, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        $user = User::changeFoodPreference($userName, $newFoodPref);
-        return $user();
+
+        return $user->updateFood();
     }
 
-    public function changeDrinkPreference($newDrinkPref){
+    public function changeDrinkPreference($userID, $json){
+        $newDrinkPref = $json->drinkPreference;
+        $user = new User();
+        $user->getUser($userID);
+
+        if(empty($newFirstName)){
+            http_response_code(400);
+            return "Supplied drink preference is not valid.";
+        }
+        if($user->getUserName() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized user";
+        }
+        $newDrinkPref = filter_var($newDrinkPref, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
+        return $user->updateDrink();
+    }
+
+    public function changeFirstName($userID, $json){
+        $newFirstName = $json->firstName;
+        $user = new User();
+        $user->getUser($userID);
+
         if(empty($newFirstName)){
             http_response_code(400);
             return "Supplied first name is not valid.";
         }
-        $userName = Token::getUsernameFromToken();
-        $newDrinkPref = filter_var($newDrinkPref, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        $user = User::changeDrinkPreference($userName, $newDrinkPref);
-        return $user;
-    }
-
-    public function changeFirstName($newFirstName){
-        if(empty($newFirstName)){
-         http_response_code(400);
-         return "Supplied first name is not valid.";
+        if($user->getUserName() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized user";
         }
         $newFirstName = filter_var($newFirstName, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        $userName = Token::getUsernameFromToken();
-        $user = User::changeFirstname($userName, $newFirstName);
-        return $user;
+        return $user->updateFirstName();
     }
 
-    public function changeLastName($newLastName){
-        if(empty($newFirstName)){
+    public function changeLastName($userID, $json)
+    {
+        $newLastName = $json->lastName;
+        $user = new User();
+        $user->getUser($userID);
+
+        if (empty($newFirstName)) {
             http_response_code(400);
-            return "Supplied first name is not valid.";
+            return "Supplied last name is not valid.";
         }
-        $userName = Token::getUsernameFromToken();
+        if ($user->getUserName() != Token::getUsernameFromToken()) {
+            http_response_code(401);
+            return "Unauthorized user";
+        }
+
         $newLastName = filter_var($newLastName, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        $user = User::changeLastname($userName, $newLastName);
-        return $user;
+        return $user->updateLastName();
     }
 }

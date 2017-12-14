@@ -9,6 +9,8 @@
 namespace CoffeeRunner\Models;
 
 
+#TODO: deleteGroupUser should check both groupID and userID
+
 class GroupUser implements \JsonSerializable
 {
     private $groupUserID;
@@ -20,7 +22,6 @@ class GroupUser implements \JsonSerializable
 
 
     }
-
 
     function jsonSerialize()
     {

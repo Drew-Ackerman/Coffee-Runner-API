@@ -8,34 +8,33 @@
 
 namespace CoffeeRunner\Controllers;
 
-# TODO: Ask about best practice for the status field, set in databse or pass in on creation
 use CoffeeRunner\Models\Invite;
+
+#TODO: do validation on json
+#TODO: do validation on args
+#TODO: TALK TO KYLE ABOUT THE STATUS PENDING
 
 class InviteController
 {
-
-//    const STATUS_DECLINED = "Declined";
-//    const STATUS_ACEEPTED = "Accepted";
-//
-//    private $groupID;
-//    private $fromUserID;
-//    private $toUserID;
-//    private $status = "Pending";
-
-    public static function sendInvite($args){
+    public function sendInvite($json){
         $invite = new Invite();
-        #TODO: Send INVITE
+        $invite->setGroupID($json->groupID);
+        $invite->setFromUserID($json->fromUserID);
+        $invite->setToUserID($json->toUserID);
+        $invite->setStatus(INVITE::STATUS_PENDING);
+        $invite->createInvite();
+        return $invite->sendInvite(); #TODO: we need to figure this logic out, how do we 'send' and invite.
     }
 
 
-    public function patchStatus($args){
+    public function updateStatus($inviteID, $json) : Invite{
         $invite = new Invite();
-        #TODO: Update invite status
+        #TODO: Finish this method with kyle
     }
 
     #This is just a method to delete/cancel a sent invite.
-    public function deleteInvite($inviteID){
+    public function deleteInvite($inviteID) : String{
         $invite = new Invite();
-        #TODO: Delete invite request
+        #TODO: Delete invite request, Discuss with kyle
     }
 }

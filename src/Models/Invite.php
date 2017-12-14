@@ -11,8 +11,16 @@ namespace CoffeeRunner\Models;
 
 use Scholarship\Utilities\DatabaseConnection;
 
+#TODO: So we are going to set the status of a new invite to pending as the default. We can do it through database rules, or through a constant in the code. This is in the createInvite method
+#TODO: need a way to update the status of an invite.
+#TODO: Discuss the logic of deleting an invite
+
 class Invite implements \JsonSerializable
 {
+    const STATUS_DECLINED = "Declined";
+    const STATUS_ACEEPTED = "Accepted";
+    const STATUS_PENDING = "Pending";
+
     private $inviteID;
     private $groupID;
     private $fromUserID;

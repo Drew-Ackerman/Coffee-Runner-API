@@ -8,24 +8,32 @@
 
 namespace CoffeeRunner\Controllers;
 
-use CoffeeRunner\Models\Group;
+use CoffeeRunner\Models\Group as Group;
+use CoffeeRunner\Models\GroupUser as GroupUse;
+use CoffeeRunner\Models\Invite as Invite;
+use CoffeeRunner\Models\Token as Token;
+
+#TODO: do validation on json
+#TODO: do validation on args
+
 
 class GroupController
 {
-    public static function createGroup($args){
+    #Should create a group
+    public function createGroup($json) : Group{
         $group = new Group();
-        $group->setGroupName();
-        $group->setGroupRunner();
-        $group->setGroupPresident();
-        $group->createGroup();
+        $group->setGroupName($json->groupName);
+        $group->setGroupRunner($json->groupRunner);
+        $group->setGroupPresident($json->groupPresident);
+        return $group->createGroup();
     }
 
-    public function deleteGroup($president){
-        #TODO call delete method, pass in Id
+    #Should delete the entire group
+    public function deleteGroup($groupID) : String{
         $group = new Group();
-        $group->getGroup();
+        $group->getGroup($groupID);
 
-        if($group->getGroupPresident() != $president){
+        if($group->getGroupPresident() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user trying to delete group";
         }
@@ -33,20 +41,46 @@ class GroupController
         return "Group successfully deleted";
     }
 
-    public function changePresident(){
-        #TODO call change President method
+    #Should change the president of the group
+    public function changePresident($groupID, $json){
+        $group = new Group();
+        $group->getGroup($groupID);
+        $newPresident = $json->president;
 
+        if($group->getGroupPresident() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized user trying to change presidents
+                    Only the current president of the group can change the president";
+        }
+        return $group->changePresident($newPresident);
     }
 
-    public function changeRunner(){
-        #TODO call change runner method
+    #Should change the runner of the group
+    public function changeRunner($groupID, $json){
+        $group = new Group();
+        $group->getGroup($groupID);
+        $newRunner = $json->runner;
+
+        if($group->getPresident() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized user trying to change presidents
+                    Only the current president of the group can change the runner";
+        }
+        return $group->changeRunner($newRunner);
     }
 
-    public function inviteUser(){
-        #TODO call invite user method
+    #Should remove a user from a group
+    public function removeUserFromGroup($userID, $groupID) : String{
+        $group = new Group();
+        $group->getGroup($groupID);
+
+        if($group->getPresident() != Token::getUsernameFromToken()){
+            http_response_code(401);
+            return "Unauthorized user trying to remove user from group
+                    Only the group president can remove users from the group";
+        }
+        $groupUserController = new GroupUserController();
+        return $groupUserController->deleteGroupUser($userID, $groupID);
     }
 
-    public function deleteUser(){
-        #TODO remove user from group
-    }
 }

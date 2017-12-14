@@ -9,6 +9,13 @@
 namespace CoffeeRunner\Models;
 //use CoffeeRunner\Utilities;
 
+
+#TODO: Refactor the methods names to use RUNNER and PRESIDENT instead of MULE and DEALER respectively
+#TODO: CreateGroup should return the created group object.
+#TODO: Delete group should return EITHER the delted object, or a stirng interger; 1,0.
+#TODO: All SETTER methods should do validation on thier inputs. Check if their empty, if their strings, etc.
+#TODO: I need a method getGroup($groupID) that returns a group object from the database.
+
 class Group implements \JsonSerializable
 {
     private $groupID;
@@ -32,8 +39,6 @@ class Group implements \JsonSerializable
         );
         return $rtn;
     }
-
-
 
     public function createGroup()
     {
