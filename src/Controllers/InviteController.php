@@ -16,14 +16,13 @@ use CoffeeRunner\Models\Invite;
 
 class InviteController
 {
-    public function sendInvite($json){
+    public function createInvite($json){
         $invite = new Invite();
         $invite->setGroupID($json->groupID);
         $invite->setFromUserID($json->fromUserID);
         $invite->setToUserID($json->toUserID);
         $invite->setStatus(INVITE::STATUS_PENDING);
-        $invite->createInvite();
-        return $invite->sendInvite(); #TODO: we need to figure this logic out, how do we 'send' and invite.
+        return $invite->createInvite();
     }
 
 

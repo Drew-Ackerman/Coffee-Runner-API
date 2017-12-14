@@ -16,7 +16,6 @@ use CoffeeRunner\Models\Token as Token;
 #TODO: do validation on json
 #TODO: do validation on args
 
-
 class GroupController
 {
     #Should create a group
@@ -26,6 +25,12 @@ class GroupController
         $group->setGroupRunner($json->groupRunner);
         $group->setGroupPresident($json->groupPresident);
         return $group->createGroup();
+    }
+
+    public function getGroup($groupID) : Group{
+        $groupModel = new Group();
+        $groupID = filter_var($groupID, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
+        return $groupModel->getGroup($groupID);
     }
 
     #Should delete the entire group
@@ -43,6 +48,10 @@ class GroupController
 
     #Should change the president of the group
     public function changePresident($groupID, $json){
+        if(empty($json->president)){
+            http_response_code(400);
+            return "A new Last Name was not provided";
+        }
         $group = new Group();
         $group->getGroup($groupID);
         $newPresident = $json->president;
@@ -52,35 +61,56 @@ class GroupController
             return "Unauthorized user trying to change presidents
                     Only the current president of the group can change the president";
         }
+        $newPresident = filter_var($newPresident, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
         return $group->changePresident($newPresident);
     }
 
     #Should change the runner of the group
     public function changeRunner($groupID, $json){
+        if(empty($json->runner)){
+            http_response_code(400);
+            return "A new Last Name was not provided";
+        }
         $group = new Group();
         $group->getGroup($groupID);
         $newRunner = $json->runner;
 
-        if($group->getPresident() != Token::getUsernameFromToken()){
+        if($group->getGroupPresident() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user trying to change presidents
                     Only the current president of the group can change the runner";
         }
+        $newRunner = filter_var($newRunner, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
         return $group->changeRunner($newRunner);
     }
 
     #Should remove a user from a group
     public function removeUserFromGroup($userID, $groupID) : String{
+        if(empty($userID) || empty($groupID)){
+            http_response_code(400);
+            return "UserID or GroupID was not provided";
+        }
         $group = new Group();
         $group->getGroup($groupID);
 
-        if($group->getPresident() != Token::getUsernameFromToken()){
+        if($group->getGroupPresident() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user trying to remove user from group
                     Only the group president can remove users from the group";
         }
         $groupUserController = new GroupUserController();
         return $groupUserController->deleteGroupUser($userID, $groupID);
+    }
+
+    public function getAllUsersFromGroup($groupID){
+        if(empty($groupID)){
+            http_response_code(400);
+            return "UserID or GroupID was not provided";
+        }
+        $username = Token::getUsernameFromToken();
+        $group = new Group();
+        $groupID = filter_var($groupID, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
+        return $group->getAllUsersFromGroup($groupID, $username);
     }
 
 }

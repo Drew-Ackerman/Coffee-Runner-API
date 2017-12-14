@@ -10,6 +10,7 @@ namespace CoffeeRunner\Controllers;
 
 use CoffeeRunner\Models\Group;
 use CoffeeRunner\Models\groupUser;
+use CoffeeRunner\Models\Token as Token;
 
 class GroupUserController
 {
@@ -28,4 +29,5 @@ class GroupUserController
         $groupUser->setUserID($userID);
         return $groupUser->deleteGroupUser();
     }
+
 }
