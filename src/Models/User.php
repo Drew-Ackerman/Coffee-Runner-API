@@ -9,7 +9,7 @@
 namespace CoffeeRunner\Models;
 
 
-use Scholarship\Utilities\DatabaseConnection;
+use CoffeeRunner\Utilities\DatabaseConnection;
 
 #TODO: all update methods use userID instead of username now.
 #TODO: discuss if deleteUser should use an instance for the userID instead of it being passed in.
@@ -29,7 +29,6 @@ class User implements \JsonSerializable
 
     public function __construct()
     {
-
 
     }
 
@@ -82,14 +81,14 @@ class User implements \JsonSerializable
     }
 
 
-    public function deleteUser($arg)
+    public function deleteUser()
     {
         try
         {
 
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare("DELETE FROM 'User' WHERE 'username' = :username");
-            $stmtHandle->bindValue(":", $arg);
+            $stmtHandle->bindValue(":", $this->userName);
             $success = $stmtHandle->execute();
 
             if (!$success) {
@@ -110,14 +109,31 @@ class User implements \JsonSerializable
 
     public function getUser($userID) : User{
         #TODO retrieve a user object from the database using the userID
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "SELECT * FROM 'User' WHERE 'userID'= :userID");
+            $stmtHandle->bindValue(":userID", $this->userID);
+            $success = $stmtHandle->execute();
+            if(!$success){
+                throw new \PDOException("sql query execution failed");
+            }
+            $groupUser = $stmtHandle->fetch(\PDO::FETCH_CLASS,"CoffeeRunner/Models/GroupUser");
+            return $groupUser;
+        }
+        catch(\Exception $e)
+        {
+            throw $e;
+        }
     }
 
-    public function updateFirstName($username,$updFirst)
+    public function updateFirstName($updFirst)
     {
         $dbh = DatabaseConnection::getInstance();
-        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName WHERE username = :username");
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'firstName' = :firstName WHERE username = :userID");
         $stmtHandle->bindValue(":firstName", $updFirst);
-        $stmtHandle->bindValue(":username", $username);
+        $stmtHandle->bindValue(":userID", $this->userID);
         $success = $stmtHandle->execute();
 
         if (!$success)
@@ -125,11 +141,11 @@ class User implements \JsonSerializable
             throw new \PDOException("Something went wrong with the update.");
         }
 
-        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
-        $rtnHandle -> bindValue(":username",$username);
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :userID");
+        $rtnHandle -> bindValue(":userID",$this->userID);
 
         $success = $rtnHandle->execute();
-        if (!success)
+        if (!$success)
         {
             throw new \PDOException("error: failed to execute sql query");
         }
@@ -139,10 +155,11 @@ class User implements \JsonSerializable
         }
     }
 
-    public function updateLast($username,$updLast)
+    public function updateLastName($updLast)
     {
         $dbh = DatabaseConnection::getInstance();
-        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'lastName' = :lastName");
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'lastName' = :lastName WHERE 'userID' = :userID");
+        $stmtHandle->bindValue(":userID",$this->userID);
         $stmtHandle->bindValue(":lastName", $updLast);
         $success = $stmtHandle->execute();
 
@@ -150,13 +167,12 @@ class User implements \JsonSerializable
         {
             throw new \PDOException("Something went wrong with the update.");
         }
-
-
-        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
-        $rtnHandle -> bindValue(":username",$username);
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE 'userID' = :userID");
+        $rtnHandle->bindValue(":userID",$this->userID);
+        $rtnHandle -> bindValue(":username",$this->userName);
 
         $success = $rtnHandle->execute();
-        if (!success)
+        if (!$success)
         {
             throw new \PDOException("error: failed to execute sql query");
         }
@@ -167,10 +183,11 @@ class User implements \JsonSerializable
 
     }
 
-    public function updateFood($username,$updFood)
+    public function updateFood($updFood)
     {
         $dbh = DatabaseConnection::getInstance();
-        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'foodPreference' = :foodPreference");
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'foodPreference' = :foodPreference WHERE 'userID' = :userID");
+        $stmtHandle->bindValue(":userID",$this->userID);
         $stmtHandle->bindValue(":foodPreference", $updFood);
         $success = $stmtHandle->execute();
 
@@ -179,11 +196,11 @@ class User implements \JsonSerializable
             throw new \PDOException("Something went wrong with the update.");
         }
 
-        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
-        $rtnHandle -> bindValue(":username",$username);
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE userID = :userID");
+        $rtnHandle -> bindValue(":userID",$this->userID);
 
         $success = $rtnHandle->execute();
-        if (!success)
+        if (!$success)
         {
             throw new \PDOException("error: failed to execute sql query");
         }
@@ -193,11 +210,12 @@ class User implements \JsonSerializable
         }
     }
 
-    public function updateDrink($username,$updDrink)
+    public function updateDrink($updDrink)
     {
         $dbh = DatabaseConnection::getInstance();
-        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'drinkPreference' = :drinkPreference");
+        $stmtHandle = $dbh->prepare("UPDATE 'user' SET 'drinkPreference' = :drinkPreference WHERE 'userID' = :userID");
         $stmtHandle->bindValue(":drinkPreference", $updDrink);
+        $stmtHandle -> bindValue(":userID",$this->userID);
         $success = $stmtHandle->execute();
 
         if (!$success)
@@ -206,11 +224,11 @@ class User implements \JsonSerializable
         }
 
 
-        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE username = :username");
-        $rtnHandle -> bindValue(":username",$username);
+        $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE userID = :userID");
+        $rtnHandle -> bindValue(":userID",$this->userID);
 
         $success = $rtnHandle->execute();
-        if (!success)
+        if (!$success)
         {
             throw new \PDOException("error: failed to execute sql query");
         }
@@ -223,30 +241,35 @@ class User implements \JsonSerializable
 
     public function setUserName($userName)
     {
+        $userName = filter_var($userName,FILTER_SANITIZE_STRING);
         $this->userName = $userName;
     }
 
 
     public function setFirstName($firstName)
     {
+        $firstName = filter_var($firstName,FILTER_SANITIZE_STRING);
         $this->firstName = $firstName;
     }
 
 
     public function setLastName($lastName)
     {
+        $lastName = filter_var($lastName,FILTER_SANITIZE_STRING);
         $this->lastName = $lastName;
     }
 
 
     public function setFoodPreference($foodPreference)
     {
+        $foodPreference = filter_var($foodPreference,FILTER_SANITIZE_STRING);
         $this->foodPreference = $foodPreference;
     }
 
 
     public function setDrinkPreference($drinkPreference)
     {
+        $drinkPreference = filter_var($drinkPreference,FILTER_SANITIZE_STRING);
         $this->drinkPreference = $drinkPreference;
     }
 

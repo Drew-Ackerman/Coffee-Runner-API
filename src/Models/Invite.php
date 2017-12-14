@@ -9,7 +9,7 @@
 namespace CoffeeRunner\Models;
 
 
-use Scholarship\Utilities\DatabaseConnection;
+use CoffeeRunner\Utilities\DatabaseConnection;
 
 #TODO: So we are going to set the status of a new invite to pending as the default. We can do it through database rules, or through a constant in the code. This is in the createInvite method
 #TODO: need a way to update the status of an invite.

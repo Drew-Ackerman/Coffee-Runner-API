@@ -7,14 +7,7 @@
  */
 
 namespace CoffeeRunner\Models;
-//use CoffeeRunner\Utilities;
-
-
-#TODO: Refactor the methods names to use RUNNER and PRESIDENT instead of MULE and DEALER respectively
-#TODO: CreateGroup should return the created group object.
-#TODO: Delete group should return EITHER the delted object, or a stirng interger; 1,0.
-#TODO: All SETTER methods should do validation on thier inputs. Check if their empty, if their strings, etc.
-#TODO: I need a method getGroup($groupID) that returns a group object from the database.
+use CoffeeRunner\Utilities\DatabaseConnection;
 
 class Group implements \JsonSerializable
 {
@@ -40,6 +33,29 @@ class Group implements \JsonSerializable
         return $rtn;
     }
 
+
+
+    public function getGroup($groupID)
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "SELECT * FROM '[group]' WHERE 'groupID'= :groupID");
+            $stmtHandle->bindValue(":groupID", $this->getGroupID());
+            $success = $stmtHandle->execute();
+            if(!$success){
+                throw new \PDOException("sql query execution failed");
+            }
+            $user = $stmtHandle->fetch(\PDO::FETCH_CLASS,"CoffeeRunner/Models/Group");
+            return $user;
+        }
+        catch(\Exception $e)
+        {
+            throw $e;
+        }
+    }
+
     public function createGroup()
     {
         try
@@ -48,12 +64,12 @@ class Group implements \JsonSerializable
             $stmtHandle = $dbh->prepare(
                 "INSERT INTO '[group]'(
                 'groupName',
-                'groupDealer',
-                'groupMule')
-                VALUES (:groupName,:groupDealer,:groupMule)");
+                'groupPresident',
+                'groupRunner')
+                VALUES (:groupName,:groupPresident,:groupRunner)");
             $stmtHandle->bindValue(":groupName",$this->groupName);
-            $stmtHandle->bindValue(":groupDealer",$this->groupDealer);
-            $stmtHandle->bindValue("groupMule",$this->groupMule);
+            $stmtHandle->bindValue(":groupPresident",$this->groupPresident);
+            $stmtHandle->bindValue("groupRunner",$this->groupRunner);
 
             $success = $stmtHandle->execute();
 
@@ -61,6 +77,8 @@ class Group implements \JsonSerializable
             {
                 throw new \PDOException("sql query execution failed");
             }
+            $id = $dbh->lastInsertId();
+            return $this->getGroup($id);
         }
         catch(\Exception $e)
         {
@@ -85,6 +103,7 @@ class Group implements \JsonSerializable
             if(!$success) {
                 throw new \PDOException("Group delete failed");
             }
+            return $success;
         }
         catch(\PDOException $e){
             throw $e;
@@ -107,10 +126,9 @@ class Group implements \JsonSerializable
             else {
                 $dbh = DatabaseConnection::getInstance();
                 $stmtHandle = $dbh->prepare(
-                    "UPDATE '[Group]'
-                    SET 'groupDealer'= :groupDealer
+                    "UPDATE '[Group]' SET 'groupPresident'= :groupPresident
                     WHERE 'groupID' = :groupID");
-                $stmtHandle->bindValue(":groupDealer", $this->groupDealer);
+                $stmtHandle->bindValue(":groupPresident", $this->groupPresident);
                 $stmtHandle->bindValue(":groupID",$this->getGroupID());
 
                 $success = $stmtHandle->execute();
@@ -140,7 +158,7 @@ class Group implements \JsonSerializable
                 $dbh = DatabaseConnection::getInstance();
                 $stmtHandle = $dbh->prepare(
                     "UPDATE '[Group]'
-                    SET 'groupDealer'= :groupRunner
+                    SET 'groupRunner'= :groupRunner
                     WHERE 'groupID' = :groupID");
                 $stmtHandle->bindValue(":groupRunner", $this->groupRunner);
                 $stmtHandle->bindValue(":groupID",$this->groupID);
@@ -176,39 +194,43 @@ class Group implements \JsonSerializable
      */
     public function setGroupName($groupName)
     {
+        $groupName = filter_var($groupName,FILTER_SANITIZE_STRING);
         $this->groupName = $groupName;
     }
 
     /**
      * @return mixed
      */
-    public function getGroupDealer()
+    public function getGroupPresident()
     {
-        return $this->groupDealer;
+
+        return $this->groupPresident;
     }
 
     /**
-     * @param mixed $groupDealer
+     * @param mixed $groupPresident
      */
-    public function setGroupDealer($groupDealer)
+    public function setGroupPresident($groupPresident)
     {
-        $this->groupDealer = $groupDealer;
+        $groupPresident = filter_var($groupPresident,FILTER_SANITIZE_STRING);
+        $this->groupPresident = $groupPresident;
     }
 
     /**
      * @return mixed
      */
-    public function getGroupMule()
+    public function getGroupRunner()
     {
-        return $this->groupMule;
+        return $this->groupRunner;
     }
 
     /**
-     * @param mixed $groupMule
+     * @param mixed $groupRunner
      */
-    public function setGroupMule($groupMule)
+    public function setGroupRunner($groupRunner)
     {
-        $this->groupMule = $groupMule;
+        $groupRunner = filter_var($groupRunner,FILTER_SANITIZE_STRING);
+        $this->groupRunner = $groupRunner;
     }
 
     /**
