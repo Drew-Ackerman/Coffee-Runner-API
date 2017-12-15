@@ -12,7 +12,6 @@ use CoffeeRunner\Models\Invite;
 
 #TODO: do validation on json
 #TODO: do validation on args
-#TODO: TALK TO KYLE ABOUT THE STATUS PENDING
 
 class InviteController
 {
@@ -26,14 +25,26 @@ class InviteController
     }
 
 
-    public function updateStatus($inviteID, $json) : Invite{
+    public function updateStatus($inviteID, $json){
+        $status = $json->status;
         $invite = new Invite();
-        #TODO: Finish this method with kyle
+        $success = $invite->updateInviteStatus($inviteID, $status);
+
+        if($success == True){
+            return "Status of invite has been changed";
+        }
+        return "Invite Status Unchanged";
     }
 
     #This is just a method to delete/cancel a sent invite.
     public function deleteInvite($inviteID) : String{
         $invite = new Invite();
         #TODO: Delete invite request, Discuss with kyle
+    }
+
+    public function getInvite($inviteID){
+        $invite = new Invite();
+        $inviteID = filter_var($inviteID, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
+        return $invite->getInvite($inviteID);
     }
 }

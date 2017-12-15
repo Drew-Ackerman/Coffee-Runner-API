@@ -142,7 +142,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
         }
         $groupID = $args['groupID'];
         $groupController = new GroupController();
-        return $groupController->changePresident($groupID, $json);
+        return $groupController->changeRunner($groupID, $json);
     };
 
     $createGroup = function () {
@@ -183,7 +183,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
     };
 
     /**** INVITE CLOSURES ****/
-    $createInvite = function ($args) {
+    $createInvite = function () {
         $inviteController = new InviteController();
         try {
             $json = (object)json_decode(file_get_contents('php://input'));

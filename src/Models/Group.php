@@ -104,7 +104,7 @@ class Group implements \JsonSerializable
             if(!$success){
                 throw new \PDOException("sql query execution failed");
             }
-            $groupUser = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\user");
+            $groupUser = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\User");
             return $groupUser;
         }
         catch(\Exception $e)
@@ -142,10 +142,10 @@ class Group implements \JsonSerializable
             else {
                 $dbh = DatabaseConnection::getInstance();
                 $stmtHandle = $dbh->prepare(
-                    "UPDATE `coffeerunner`.`[Group]` SET groupPresident = :groupPresident
+                    "UPDATE `coffeerunner`.`[group]` SET groupPresident = :groupPresident
                     WHERE groupID = :groupID");
                 $stmtHandle->bindValue(":groupPresident", $newPresident);
-                $stmtHandle->bindValue(":groupID",$this->getGroupID());
+                $stmtHandle->bindValue(":groupID",$this->groupID);
 
                 $success = $stmtHandle->execute();
 
@@ -174,7 +174,7 @@ class Group implements \JsonSerializable
             else {
                 $dbh = DatabaseConnection::getInstance();
                 $stmtHandle = $dbh->prepare(
-                    "UPDATE `coffeerunner`.`[Group]`
+                    "UPDATE `coffeerunner`.`[group]`
                     SET groupRunner= :groupRunner
                     WHERE groupID = :groupID");
                 $stmtHandle->bindValue(":groupRunner", $updateRunner);

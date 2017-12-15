@@ -82,7 +82,7 @@ class Invite implements \JsonSerializable
             $stmtHandle->bindValue(":groupID", $this->groupID);
             $stmtHandle->bindValue(":fromUserID", $this->fromUserID);
             $stmtHandle->bindValue(":toUserID", $this->toUserID);
-            $stmtHandle->bindValue(":status",self::STATUS_PENDING);
+            $stmtHandle->bindValue(":status",$this->status);
 
             $success = $stmtHandle->execute();
 

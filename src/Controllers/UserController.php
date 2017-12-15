@@ -36,11 +36,14 @@ class UserController
     public function deleteUser($userID){
         $userModel = new User();
         $user = $userModel->getUser($userID);
-        if($user->getUserName() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized deletion of user";
         }
-        return $userModel->deleteUser();
+        If($user[0]->deleteUser()){
+            return "Deletion of user was successful";
+        }
+        return "Deletion of user was not successful";
     }
 
     #Should change the food preference for a user
@@ -51,19 +54,22 @@ class UserController
         }
         $newFoodPref = $json->foodPreference;
         $user = new User();
-        $user->getUser($userID);
+        $user = $user->getUser($userID);
 
         if(empty($newFoodPref)) {
             http_response_code(400);
             return "Supplied food preference is not valid.";
         }
-        if($user->getUserName() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user";
         }
         $newFoodPref = filter_var($newFoodPref, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
 
-        return $user->updateFood($newFoodPref);
+        if($user[0]->updateFood($newFoodPref)){
+            return "Food change was successful";
+        }
+        return "Food change was not successful";
     }
 
     #Should change the drink preference for a user
@@ -74,18 +80,22 @@ class UserController
         }
         $newDrinkPref = $json->drinkPreference;
         $user = new User();
-        $user->getUser($userID);
+        $user = $user->getUser($userID);
 
-        if(empty($newFirstName)){
+        if(empty($newDrinkPref)){
             http_response_code(400);
             return "Supplied drink preference is not valid.";
         }
-        if($user->getUserName() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user";
         }
         $newDrinkPref = filter_var($newDrinkPref, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        return $user->updateDrink($newDrinkPref);
+
+        if($user[0]->updateDrink($newDrinkPref)){
+            return "Drink change successful";
+        }
+        return "Drink change not successful";
     }
 
     #Should change the first name for a user
@@ -97,18 +107,21 @@ class UserController
         }
         $newFirstName = $json->firstName;
         $user = new User();
-        $user->getUser($userID);
+        $user = $user->getUser($userID);
 
         if(empty($newFirstName)){
             http_response_code(400);
             return "Supplied first name is not valid.";
         }
-        if($user->getUserName() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user";
         }
         $newFirstName = filter_var($newFirstName, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        return $user->updateFirstName($newFirstName);
+        if($user[0]->updateFirstName($newFirstName)){
+            return "First Name change successful";
+        }
+        return "First name change not successful";
     }
 
     #Should change the last name for a user
@@ -120,18 +133,21 @@ class UserController
         }
         $newLastName = $json->lastName;
         $user = new User();
-        $user->getUser($userID);
+        $user = $user->getUser($userID);
 
         if (empty($newLastName)) {
             http_response_code(400);
             return "Supplied last name is not valid.";
         }
-        if ($user->getUserName() != Token::getUsernameFromToken()) {
+        if ($user[0]->getUserName() != Token::getUsernameFromToken()) {
             http_response_code(401);
             return "Unauthorized user";
         }
 
         $newLastName = filter_var($newLastName, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        return $user->updateLastName($newLastName);
+        if($user[0]->updateLastName($newLastName)){
+            return "Last name change successful";
+        }
+        return "Last name change not successful";
     }
 }

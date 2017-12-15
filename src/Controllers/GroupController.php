@@ -10,7 +10,8 @@ namespace CoffeeRunner\Controllers;
 
 use CoffeeRunner\Models\Group as Group;
 use CoffeeRunner\Models\GroupUser as GroupUse;
-use CoffeeRunner\Models\Invite as Invite;
+use CoffeeRunner\Models\GroupUser;
+use CoffeeRunner\Models\User as User;
 use CoffeeRunner\Models\Token as Token;
 
 #TODO: do validation on json
@@ -19,7 +20,7 @@ use CoffeeRunner\Models\Token as Token;
 class GroupController
 {
     #Should create a group
-    public function createGroup($json) : Group{
+    public function createGroup($json){
         $group = new Group();
         $group->setGroupName($json->groupName);
         $group->setGroupRunner($json->groupRunner);
@@ -36,13 +37,15 @@ class GroupController
     #Should delete the entire group
     public function deleteGroup($groupID){
         $group = new Group();
-        $group->getGroup($groupID);
+        $group = $group->getGroup($groupID);
+        $user = new User();
+        $user = $user->getUser($group[0]->getGroupPresident());
 
-        if($group->getGroupPresident() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user trying to delete group";
         }
-        $group->deleteGroup();
+        $group[0]->deleteGroup();
         return "Group successfully deleted";
     }
 
@@ -50,38 +53,48 @@ class GroupController
     public function changePresident($groupID, $json){
         if(empty($json->president)){
             http_response_code(400);
-            return "A new Last Name was not provided";
+            return "A new president was not provided";
         }
         $group = new Group();
-        $group->getGroup($groupID);
-        $newPresident = $json->president;
+        $group = $group->getGroup($groupID);
+        $user = new User();
+        $user = $user->getUser($group[0]->getGroupPresident());
 
-        if($group->getGroupPresident() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user trying to change presidents
                     Only the current president of the group can change the president";
         }
+        $newPresident = $json->president;
         $newPresident = filter_var($newPresident, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        return $group->changePresident($newPresident);
+        if($group[0]->changePresident($newPresident)){
+            return "Group President changed";
+        }
+        return "Group President not changed";
     }
 
     #Should change the runner of the group
     public function changeRunner($groupID, $json){
         if(empty($json->runner)){
             http_response_code(400);
-            return "A new Last Name was not provided";
+            return "A new Runner was not provided";
         }
         $group = new Group();
-        $group->getGroup($groupID);
-        $newRunner = $json->runner;
+        $group = $group->getGroup($groupID);
+        $user = new User();
+        $user = $user->getUser($group[0]->getGroupPresident());
 
-        if($group->getGroupPresident() != Token::getUsernameFromToken()){
+        if($user[0]->getUserName() != Token::getUsernameFromToken()){
             http_response_code(401);
             return "Unauthorized user trying to change presidents
                     Only the current president of the group can change the runner";
         }
+        $newRunner = $json->runner;
         $newRunner = filter_var($newRunner, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        return $group->changeRunner($newRunner);
+        if($group[0]->changeRunner($newRunner)){
+            return "Runner change successful";
+        }
+        return "Runner change not successful";
     }
 
     #Should remove a user from a group
@@ -109,8 +122,20 @@ class GroupController
         }
         $username = Token::getUsernameFromToken();
         $group = new Group();
+        $groupUser = new GroupUser();
+
+        $username = filter_var($username, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
         $groupID = filter_var($groupID, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
-        return $group->getAllUsersInGroup($groupID, $username);
+
+        if($groupUser->verifyUserInGroup($groupID, $username) == 1){
+            return $group->getAllUsersInGroup($groupID);
+        }
+        else{
+            http_response_code(401);
+            Return "User not a part of requested group";
+        }
+
+
     }
 
 }
