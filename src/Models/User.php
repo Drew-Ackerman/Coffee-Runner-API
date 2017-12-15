@@ -68,7 +68,7 @@ class User implements \JsonSerializable
             {
                 throw new \PDOException("sql query execution failed");
             }
-            $user = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\User");
+            $user = $dbh->lastInsertId();
             return $user;
         }
         catch (\Exception $e)
@@ -147,7 +147,7 @@ class User implements \JsonSerializable
         }
         else
         {
-            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+            return $success;
         }
     }
 
@@ -174,7 +174,7 @@ class User implements \JsonSerializable
         }
         else
         {
-            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+            return $success;
         }
 
     }
@@ -202,7 +202,7 @@ class User implements \JsonSerializable
         }
         else
         {
-            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+            return $success;
         }
     }
 
@@ -230,7 +230,7 @@ class User implements \JsonSerializable
         }
         else
         {
-            return $user = $rtnHandle->fetchAll(\PDO::FETCH_CLASS);
+            return $success;
         }
     }
 

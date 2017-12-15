@@ -58,8 +58,7 @@ class Invite implements \JsonSerializable
             {
                 throw new \PDOException("sql query execution failed");
             }
-            $invite = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\Invite");
-            return $invite;
+            return $success;
         }
         catch (\Exception $e)
         {
