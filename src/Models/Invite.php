@@ -49,8 +49,7 @@ class Invite implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "SELECT * FROM `coffeerunner`.`invite`
-                          WHERE inviteID = :inviteID");
+                "SELECT * FROM `coffeerunner`.`invite` WHERE `inviteID` = :inviteID");
 
             $stmtHandle->bindValue(":inviteID", $inviteID);
             $success = $stmtHandle->execute();
@@ -59,7 +58,7 @@ class Invite implements \JsonSerializable
             {
                 throw new \PDOException("sql query execution failed");
             }
-            $invite = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\invite");
+            $invite = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\Invite");
             return $invite;
         }
         catch (\Exception $e)
@@ -105,21 +104,22 @@ class Invite implements \JsonSerializable
 
     }
 #TODO: need a way to update the status of an invite.
-    public function updateInviteStatus($updateStatus)
+    public function updateInviteStatus($inviteID,$updateStatus)
     {
         try
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare("UPDATE `coffeerunner`.`invite` SET status = :status WHERE inviteID = :inviteID");
             $stmtHandle->bindValue(":status",$updateStatus);
-            $stmtHandle->bindValue(":inviteID", $this->inviteID);
+            $stmtHandle->bindValue(":inviteID", $inviteID);
 
             $success = $stmtHandle->execute();
 
             if(!$success) {
                 throw new\PDOException("SQL query execution failed");
             }
-            return $success;
+            $id = $dbh->lastInsertId();
+            return $this->getInvite($id);
         }
         catch(\PDOException $e){
             throw $e;

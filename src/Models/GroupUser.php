@@ -98,7 +98,7 @@ class GroupUser implements \JsonSerializable
             if(!$success){
                 throw new \PDOException("sql query execution failed");
             }
-            $groupUser = $stmtHandle->fetch(\PDO::FETCH_CLASS,"CoffeeRunner/Models/GroupUser");
+            $groupUser = $stmtHandle->fetch(\PDO::FETCH_CLASS,"CoffeeRunner\Models\GroupUser");
             return $groupUser;
         }
         catch(\Exception $e)

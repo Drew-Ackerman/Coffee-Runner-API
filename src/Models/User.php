@@ -83,7 +83,7 @@ class User implements \JsonSerializable
 
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`User` WHERE userID = :userID");
-            $stmtHandle->bindValue(":", $this->userID);
+            $stmtHandle->bindValue(":userID", $this->userID);
             $success = $stmtHandle->execute();
 
             if (!$success) {
