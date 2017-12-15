@@ -71,14 +71,13 @@ class GroupUser implements \JsonSerializable
                           INNER JOIN groupUser ON groupUser.userID = user.userID 
                           where groupUserID = :groupUserID AND user.username = :username");
             $stmtHandle->bindValue(":username", $username);
-            $stmtHandle->bindValue(":groupID", $groupUserID);
+            $stmtHandle->bindValue(":groupUserID", $groupUserID);
 
             $success = $stmtHandle->execute();
             if(!$success){
                 throw new \PDOException("sql query execution failed");
             }
-            $groupUser = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\GroupUser");
-            return $groupUser;
+            return $success;
         }
         catch(\Exception $e)
         {
