@@ -62,10 +62,10 @@ class Group implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "INSERT INTO '[group]'(
-                'groupName',
-                'groupPresident',
-                'groupRunner')
+                "INSERT INTO `coffeerunner`.`[group]`(
+                groupName,
+                groupPresident,
+                groupRunner)
                 VALUES (:groupName,:groupPresident,:groupRunner)");
             $stmtHandle->bindValue(":groupName",$this->groupName);
             $stmtHandle->bindValue(":groupPresident",$this->groupPresident);
