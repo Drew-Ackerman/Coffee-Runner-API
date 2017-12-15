@@ -60,6 +60,33 @@ class GroupUser implements \JsonSerializable
         }
 
     }
+
+    public function verifyUserInGroup($username, $groupID)
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "SELECT * from `coffeerunner`.`user` 
+                          INNER JOIN groupUser ON groupUser.userID = user.userID 
+                          where groupID = 1 AND user.username = `generic`");
+            $stmtHandle->bindValue(":username",$username);
+            $stmtHandle->bindValue(":groupID", $groupID);
+
+            $success = $stmtHandle->execute();
+            if(!$success){
+                throw new \PDOException("sql query execution failed");
+            }
+            $groupUser = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\GroupUser");
+            return $groupUser;
+        }
+        catch(\Exception $e)
+        {
+            throw $e;
+        }
+
+    }
+
     public function getGroupUser($id)
     {
         try
