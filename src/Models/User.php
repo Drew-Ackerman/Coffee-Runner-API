@@ -47,12 +47,12 @@ class User implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "INSERT INTO `coffeerunner`.`User`(
+                "INSERT INTO `coffeerunner`.`user`(
                 userName,
                 firstName,
                 lastName,
                 foodPreference,
-                drinkPreference,
+                drinkPreference
                 ) 
                 VALUES (:username,:firstName,:lastName,:foodPreference,:drinkPreference)");
 
@@ -68,6 +68,8 @@ class User implements \JsonSerializable
             {
                 throw new \PDOException("sql query execution failed");
             }
+            $user = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\User");
+            return $user;
         }
         catch (\Exception $e)
         {
