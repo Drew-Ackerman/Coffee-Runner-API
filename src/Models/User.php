@@ -107,7 +107,7 @@ class User implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "SELECT * FROM 'User' WHERE 'userID'= :userID");
+                "SELECT * FROM `coffeerunner`.`user` WHERE 'userID'= :userID");
             $stmtHandle->bindValue(":userID", $this->userID);
             $success = $stmtHandle->execute();
             if(!$success){
