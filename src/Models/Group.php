@@ -88,22 +88,21 @@ class Group implements \JsonSerializable
 
 //SELECT * From groupUser Join user ON groupUser.userID = user.userID
 // WHERE groupUser.groupID = 2 AND userName = 'Kyle'
-    public function getUserByUsername ($groupID,$username)
+    public function getAllUsersInGroup ($groupID,$username)
     {
         try
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
                 "SELECT * FROM `coffeerunner`.`groupUser` 
-                          JOIN user ON groupUser.userID = user.userID
-                          WHERE groupUser.groupID = :groupID AND username = :username");
+                          WHERE groupUser.groupID = :groupID ");
             $stmtHandle->bindValue(":groupID", $groupID);
-            $stmtHandle->bindValue(":username", $username);
+
             $success = $stmtHandle->execute();
             if(!$success){
                 throw new \PDOException("sql query execution failed");
             }
-            $groupUser = $stmtHandle->fetchAll(\PDO::FETCH_CLASS,"CoffeeRunner/Models/Group");
+            $groupUser = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\GroupUser");
             return $groupUser;
         }
         catch(\Exception $e)

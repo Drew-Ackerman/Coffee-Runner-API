@@ -26,7 +26,7 @@ class GroupUser implements \JsonSerializable
     {
         $rtn= array(
             'groupUserID' => $this->groupID,
-            '$groupID' => $this->groupID,
+            'groupID' => $this->groupID,
             'userID' => $this->userID,
         );
         return $rtn;

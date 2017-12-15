@@ -243,6 +243,10 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r)  
     $r->addRoute(Methods::GET, $baseURI . "/invite/{inviteID:\d+}", $getInvite);
     $r->addRoute(Methods::DELETE, $baseURI . "/invite/{inviteID:\d+}", $deleteInvite);
     $r->addRoute(Methods::PATCH, $baseURI . "/invite/{inviteID:\d+}/status", $updateInviteStatus);
+
+    /** TOKEN ROUTE */
+    $r->addRoute(Methods::POST, $baseURI . '/tokens', $handlePostToken);
+
 });
 
 
