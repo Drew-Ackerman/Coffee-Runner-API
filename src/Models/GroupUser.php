@@ -61,7 +61,7 @@ class GroupUser implements \JsonSerializable
 
     }
 
-    public function verifyUserInGroup($username, $groupID)
+    public function verifyUserInGroup($username, $groupUserID)
     {
         try
         {
@@ -69,9 +69,9 @@ class GroupUser implements \JsonSerializable
             $stmtHandle = $dbh->prepare(
                 "SELECT * from `coffeerunner`.`user` 
                           INNER JOIN groupUser ON groupUser.userID = user.userID 
-                          where groupID = 1 AND user.username = `generic`");
-            $stmtHandle->bindValue(":username",$username);
-            $stmtHandle->bindValue(":groupID", $groupID);
+                          where groupUserID = :groupUserID AND user.username = :username");
+            $stmtHandle->bindValue(":username", $username);
+            $stmtHandle->bindValue(":groupID", $groupUserID);
 
             $success = $stmtHandle->execute();
             if(!$success){
