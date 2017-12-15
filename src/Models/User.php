@@ -68,8 +68,10 @@ class User implements \JsonSerializable
             {
                 throw new \PDOException("sql query execution failed");
             }
-            $user = $dbh->lastInsertId();
-            return $user;
+            else {
+                $user = $dbh->lastInsertId();
+                return $user;
+            }
         }
         catch (\Exception $e)
         {
@@ -84,7 +86,7 @@ class User implements \JsonSerializable
         {
 
             $dbh = DatabaseConnection::getInstance();
-            $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`User` WHERE userID = :userID");
+            $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`user` WHERE userID = :userID");
             $stmtHandle->bindValue(":userID", $this->userID);
             $success = $stmtHandle->execute();
 
@@ -162,21 +164,10 @@ class User implements \JsonSerializable
         if (!$success)
         {
             throw new \PDOException("Something went wrong with the update.");
-        }
-        $rtnHandle = $dbh->prepare("SELECT * FROM `coffeerunner`.`user` WHERE userID = :userID");
-        $rtnHandle->bindValue(":userID",$this->userID);
-        $rtnHandle -> bindValue(":username",$this->username);
-
-        $success = $rtnHandle->execute();
-        if (!$success)
-        {
-            throw new \PDOException("error: failed to execute sql query");
-        }
-        else
+        }else
         {
             return $success;
         }
-
     }
 
     public function updateFood($updateFood)
@@ -190,15 +181,6 @@ class User implements \JsonSerializable
         if (!$success)
         {
             throw new \PDOException("Something went wrong with the update.");
-        }
-
-        $rtnHandle = $dbh->prepare("SELECT * FROM `coffeerunner`.`user WHERE userID = :userID");
-        $rtnHandle -> bindValue(":userID",$this->userID);
-
-        $success = $rtnHandle->execute();
-        if (!$success)
-        {
-            throw new \PDOException("error: failed to execute sql query");
         }
         else
         {
@@ -217,16 +199,6 @@ class User implements \JsonSerializable
         if (!$success)
         {
             throw new \PDOException("Something went wrong with the update.");
-        }
-
-
-        $rtnHandle = $dbh->prepare("SELECT * FROM `coffeerunner`.`user` WHERE userID = :userID");
-        $rtnHandle -> bindValue(":userID",$this->userID);
-
-        $success = $rtnHandle->execute();
-        if (!$success)
-        {
-            throw new \PDOException("error: failed to execute sql query");
         }
         else
         {
