@@ -7,11 +7,7 @@
  */
 
 namespace CoffeeRunner\Models;
-
-
 use CoffeeRunner\Utilities\DatabaseConnection;
-
-
 
 class Invite implements \JsonSerializable
 {
@@ -35,7 +31,7 @@ class Invite implements \JsonSerializable
     {
         $rtn= array(
             'inviteID' => $this->groupID,
-            '$groupID' => $this->groupID,
+            'groupID' => $this->groupID,
             'fromUserID' => $this->fromUserID,
             'toUserID' => $this->toUserID,
             'status' => $this->status
@@ -76,12 +72,12 @@ class Invite implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "INSERT INTO `coffeerunner`.`User`(
+                "INSERT INTO `coffeerunner`.`invite`(
                 groupID,
                 fromUserID,
                 toUserID,
                 status) 
-                VALUES (:groupID, :fromUserID, :toUserID,:status)");
+                VALUES (:groupID,:fromUserID,:toUserID,:status)");
 
             $stmtHandle->bindValue(":groupID", $this->groupID);
             $stmtHandle->bindValue(":fromUserID", $this->fromUserID);
@@ -93,6 +89,10 @@ class Invite implements \JsonSerializable
             if (!$success)
             {
                 throw new \PDOException("sql query execution failed");
+            }
+            else {
+                $invite = $dbh->lastInsertId();
+                return $invite;
             }
 
         }

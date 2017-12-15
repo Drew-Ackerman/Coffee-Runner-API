@@ -117,9 +117,10 @@ class Group implements \JsonSerializable
     {
         try {
             $dbh = DatabaseConnection::getInstance();
-            $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`[Group]` WHERE groupID = :groupID");
-            $stmtHandle -> bindValue(":groupID", $this->getGroupID());
+            $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`[group]` WHERE groupID = :groupID");
+            $stmtHandle -> bindValue(":groupID", $this->groupID);
             $success = $stmtHandle->execute();
+
             if(!$success) {
                 throw new \PDOException("Group delete failed");
             }
