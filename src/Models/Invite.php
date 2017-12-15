@@ -43,6 +43,31 @@ class Invite implements \JsonSerializable
         return $rtn;
     }
 
+    public function getInvite($inviteID)
+    {
+        try
+        {
+            $dbh = DatabaseConnection::getInstance();
+            $stmtHandle = $dbh->prepare(
+                "SELECT * FROM `coffeerunner`.`invite`
+                          WHERE inviteID = :inviteID");
+
+            $stmtHandle->bindValue(":inviteID", $inviteID);
+            $success = $stmtHandle->execute();
+
+            if (!$success)
+            {
+                throw new \PDOException("sql query execution failed");
+            }
+            $invite = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\invite");
+            return $invite;
+        }
+        catch (\Exception $e)
+        {
+            throw $e;
+        }
+    }
+
     /**
      * send Invite
      */
