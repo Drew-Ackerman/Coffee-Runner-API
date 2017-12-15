@@ -118,8 +118,7 @@ class Invite implements \JsonSerializable
             if(!$success) {
                 throw new\PDOException("SQL query execution failed");
             }
-            $id = $dbh->lastInsertId();
-            return $this->getInvite($id);
+            return $this->getInvite($inviteID);
         }
         catch(\PDOException $e){
             throw $e;
