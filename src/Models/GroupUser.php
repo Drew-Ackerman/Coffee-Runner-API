@@ -38,9 +38,9 @@ class GroupUser implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "INSERT INTO 'groupUser'(
-                'groupID',
-                'userID')
+                "INSERT INTO `coffeerunner`.`groupUser`(
+                groupID,
+                userID)
                 VALUES (:groupID,:userID)");
             $stmtHandle->bindValue(":groupID",$this->groupID);
             $stmtHandle->bindValue(":userID",$this->userID);
@@ -60,14 +60,14 @@ class GroupUser implements \JsonSerializable
         }
 
     }
-    public function getGroupUser()
+    public function getGroupUser($id)
     {
         try
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "SELECT * FROM 'groupUser' WHERE 'groupUserID'= :groupUserID");
-            $stmtHandle->bindValue(":groupUserID", $this->groupUserID);
+                "SELECT * FROM `coffeerunner`.`groupUser` WHERE groupUserID = :groupUserID");
+            $stmtHandle->bindValue(":groupUserID", $id);
             $success = $stmtHandle->execute();
             if(!$success){
                 throw new \PDOException("sql query execution failed");
@@ -92,7 +92,7 @@ class GroupUser implements \JsonSerializable
             else
             {
                 $dbh = DatabaseConnection::getInstance();
-                $stmtHandle = $dbh->prepare("DELETE FROM `groupUser` WHERE `groupUserID` = :groupUserID AND 'userID' = :userID");
+                $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`groupUser` WHERE groupUserID = :groupUserID AND userID = :userID");
                 $stmtHandle->bindValue(":groupUserID", $this->groupUserID);
                 $stmtHandle->bindValue(":userID", $this->userID);
                 $success = $stmtHandle->execute();

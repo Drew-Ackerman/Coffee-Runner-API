@@ -94,9 +94,9 @@ class Group implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "SELECT * FROM 'groupUser' 
-                          JOIN 'user' ON 'groupUser.userID' = 'user.userID'
-                          WHERE 'groupUser.groupID' = :groupID AND 'username' = :username");
+                "SELECT * FROM `coffeerunner`.`groupUser` 
+                          JOIN user ON groupUser.userID = user.userID
+                          WHERE groupUser.groupID = :groupID AND username = :username");
             $stmtHandle->bindValue(":groupID", $groupID);
             $stmtHandle->bindValue(":username", $username);
             $success = $stmtHandle->execute();
@@ -116,7 +116,7 @@ class Group implements \JsonSerializable
     {
         try {
             $dbh = DatabaseConnection::getInstance();
-            $stmtHandle = $dbh->prepare("DELETE FROM '[Group]' WHERE 'groupID' = :groupID");
+            $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`[Group]` WHERE groupID = :groupID");
             $stmtHandle -> bindValue(":groupID", $this->getGroupID());
             $success = $stmtHandle->execute();
             if(!$success) {
@@ -140,8 +140,8 @@ class Group implements \JsonSerializable
             else {
                 $dbh = DatabaseConnection::getInstance();
                 $stmtHandle = $dbh->prepare(
-                    "UPDATE '[Group]' SET 'groupPresident'= :groupPresident
-                    WHERE 'groupID' = :groupID");
+                    "UPDATE `coffeerunner`.`[Group]` SET groupPresident = :groupPresident
+                    WHERE groupID = :groupID");
                 $stmtHandle->bindValue(":groupPresident", $newPresident);
                 $stmtHandle->bindValue(":groupID",$this->getGroupID());
 
@@ -172,9 +172,9 @@ class Group implements \JsonSerializable
             else {
                 $dbh = DatabaseConnection::getInstance();
                 $stmtHandle = $dbh->prepare(
-                    "UPDATE '[Group]'
-                    SET 'groupRunner'= :groupRunner
-                    WHERE 'groupID' = :groupID");
+                    "UPDATE `coffeerunner`.`[Group]`
+                    SET groupRunner= :groupRunner
+                    WHERE groupID = :groupID");
                 $stmtHandle->bindValue(":groupRunner", $updateRunner);
                 $stmtHandle->bindValue(":groupID",$this->groupID);
 
