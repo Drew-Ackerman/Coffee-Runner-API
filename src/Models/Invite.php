@@ -92,7 +92,8 @@ class Invite implements \JsonSerializable
             }
             else {
                 $invite = $dbh->lastInsertId();
-                return $invite;
+
+                return $this->getInvite($invite);
             }
 
         }
