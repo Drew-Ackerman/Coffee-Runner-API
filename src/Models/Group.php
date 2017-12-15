@@ -26,7 +26,7 @@ class Group implements \JsonSerializable
     {
         $rtn= array(
             'groupID' => $this->groupID,
-            '$groupName' => $this->groupName,
+            'groupName' => $this->groupName,
             'groupPresident' => $this->groupPresident,
             'groupRunner' => $this->groupRunner
         );
@@ -41,13 +41,13 @@ class Group implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "SELECT * FROM '[group]' WHERE 'groupID'= :groupID");
-            $stmtHandle->bindValue(":groupID", $this->getGroupID());
+                "SELECT * FROM `coffeerunner`.`[group]` WHERE groupID = :groupID");
+            $stmtHandle->bindValue(":groupID", $groupID);
             $success = $stmtHandle->execute();
             if(!$success){
                 throw new \PDOException("sql query execution failed");
             }
-            $user = $stmtHandle->fetch(\PDO::FETCH_CLASS,"CoffeeRunner/Models/Group");
+            $user = $stmtHandle->FetchAll(\PDO::FETCH_CLASS,"CoffeeRunner\Models\Group");
             return $user;
         }
         catch(\Exception $e)

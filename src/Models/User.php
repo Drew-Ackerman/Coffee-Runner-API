@@ -16,7 +16,7 @@ class User implements \JsonSerializable
 {
 
     private $userID;
-    private $userName;
+    private $username;
     private $firstName;
     private $lastName;
     private $foodPreference;
@@ -31,7 +31,7 @@ class User implements \JsonSerializable
     {
         $rtn= array(
         'userID' => $this->userID,
-        '$userName' => $this->userName,
+        'username' => $this->username,
         'firstName' => $this->firstName,
         'lastName' => $this->lastName,
         'foodPreference' => $this->foodPreference,
@@ -48,15 +48,15 @@ class User implements \JsonSerializable
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
                 "INSERT INTO 'User'(
-                'userName',
+                'username',
                 'firstName',
                 'lastName',
                 'foodPreference',
                 'drinkPreference',
                 ) 
-                VALUES (:userName,:firstName,:lastName,:foodPreference,:drinkPreference)");
+                VALUES (:username,:firstName,:lastName,:foodPreference,:drinkPreference)");
 
-            $stmtHandle->bindValue(":userName", $this->userName);
+            $stmtHandle->bindValue(":username", $this->username);
             $stmtHandle->bindValue(":firstName",$this->firstName);
             $stmtHandle->bindValue(":lastName",$this->lastName);
             $stmtHandle->bindValue(":foodPreference",$this->foodPreference);
@@ -102,18 +102,18 @@ class User implements \JsonSerializable
     }
 
 
-    public function getUser($userID) : User{
+    public function getUser($userID){
         try
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "SELECT * FROM `coffeerunner`.`user` WHERE 'userID'= :userID");
-            $stmtHandle->bindValue(":userID", $this->userID);
+                "SELECT * FROM `coffeerunner`.`user` WHERE userID = :userID");
+            $stmtHandle->bindValue(":userID", $userID);
             $success = $stmtHandle->execute();
             if(!$success){
                 throw new \PDOException("sql query execution failed");
             }
-            $groupUser = $stmtHandle->fetch(\PDO::FETCH_CLASS,"CoffeeRunner/Models/GroupUser");
+            $groupUser = $stmtHandle->FetchAll(\PDO::FETCH_CLASS, 'CoffeeRunner\Models\User');
             return $groupUser;
         }
         catch(\Exception $e)
@@ -163,7 +163,7 @@ class User implements \JsonSerializable
         }
         $rtnHandle = $dbh->prepare("SELECT * FROM 'user' WHERE 'userID' = :userID");
         $rtnHandle->bindValue(":userID",$this->userID);
-        $rtnHandle -> bindValue(":username",$this->userName);
+        $rtnHandle -> bindValue(":username",$this->username);
 
         $success = $rtnHandle->execute();
         if (!$success)
@@ -233,10 +233,10 @@ class User implements \JsonSerializable
     }
 
 
-    public function setUserName($userName)
+    public function setUserName($username)
     {
-        $userName = filter_var($userName,FILTER_SANITIZE_STRING);
-        $this->userName = $userName;
+        $username = filter_var($username,FILTER_SANITIZE_STRING);
+        $this->username = $username;
     }
 
 
@@ -276,7 +276,7 @@ class User implements \JsonSerializable
 
     public function getUserName()
     {
-        return $this->userName;
+        return $this->username;
     }
 
 

@@ -27,14 +27,14 @@ class GroupController
         return $group->createGroup();
     }
 
-    public function getGroup($groupID) : Group{
+    public function getGroup($groupID){
         $groupModel = new Group();
         $groupID = filter_var($groupID, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
         return $groupModel->getGroup($groupID);
     }
 
     #Should delete the entire group
-    public function deleteGroup($groupID) : String{
+    public function deleteGroup($groupID){
         $group = new Group();
         $group->getGroup($groupID);
 
@@ -85,7 +85,7 @@ class GroupController
     }
 
     #Should remove a user from a group
-    public function removeUserFromGroup($userID, $groupID) : String{
+    public function removeUserFromGroup($userID, $groupID){
         if(empty($userID) || empty($groupID)){
             http_response_code(400);
             return "UserID or GroupID was not provided";

@@ -26,7 +26,7 @@ class UserController
         return $newUser->createUser();
     }
 
-    public function getUser($userID) : User{
+    public function getUser($userID){
         $userModel = new User();
         $userID = filter_var($userID, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_LOW);
         return $userModel->getUser($userID);
