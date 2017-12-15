@@ -53,11 +53,11 @@ class Invite implements \JsonSerializable
         {
             $dbh = DatabaseConnection::getInstance();
             $stmtHandle = $dbh->prepare(
-                "INSERT INTO 'User'(
-                'groupID',
-                'fromUserID',
-                'toUserID',
-                'status') 
+                "INSERT INTO `coffeerunner`.`User`(
+                groupID,
+                fromUserID,
+                toUserID,
+                status) 
                 VALUES (:groupID, :fromUserID, :toUserID,:status)");
 
             $stmtHandle->bindValue(":groupID", $this->groupID);
@@ -85,7 +85,7 @@ class Invite implements \JsonSerializable
         try
         {
             $dbh = DatabaseConnection::getInstance();
-            $stmtHandle = $dbh->prepare("UPDATE 'invite' SET 'status' = :status WHERE 'inviteID' = :inviteID");
+            $stmtHandle = $dbh->prepare("UPDATE `coffeerunner`.`invite` SET status = :status WHERE inviteID = :inviteID");
             $stmtHandle->bindValue(":status",$updateStatus);
             $stmtHandle->bindValue(":inviteID", $this->inviteID);
 
@@ -105,7 +105,7 @@ class Invite implements \JsonSerializable
     {
         try {
             $dbh = DatabaseConnection::getInstance();
-            $stmtHandle = $dbh->prepare("DELETE FROM 'invite' WHERE 'inviteID' = :inviteID");
+            $stmtHandle = $dbh->prepare("DELETE FROM `coffeerunner`.`invite` WHERE inviteID = :inviteID");
             $stmtHandle -> bindValue(":inviteID", $this->inviteID);
             $success = $stmtHandle->execute();
             if(!$success) {
@@ -129,12 +129,12 @@ class Invite implements \JsonSerializable
             else
             {
                 $dbh = DatabaseConnection::getInstance();
-                $stmtHandle = $dbh->prepare("INSERT INTO 'invite'(
-                'inviteID',
-                'groupID',
-                'fromUserID',
-                'toUserID',
-                'status'
+                $stmtHandle = $dbh->prepare("INSERT INTO `cofeerunner`.`invite`
+                inviteID,
+                groupID,
+                fromUserID,
+                toUserID,
+                status'
                 )
                 VALUES(:inviteID,:groupID,:fromUserID,:toUserID,:status)");
                 $stmtHandle->bindValue(":groupID",$this->groupID);
